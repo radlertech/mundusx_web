@@ -1,0 +1,11 @@
+{
+  "name": "mundusx_web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "MundusX public marketing/docs static site (home, docs, install, release pages).",
+  "scripts": {
+    "build:docs-site": "node scripts/build-public-docs-site.mjs dist/public-docs-site",
+    "serve:docs-site": "node scripts/serve-docs-site.mjs dist/public-docs-site",
+    "test:docs-site": "bash tests/public-docs-site.sh"
+  }
+}
