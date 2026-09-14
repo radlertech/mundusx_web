@@ -1788,7 +1788,7 @@ function renderNetworkPage() {
         min-height: 700px;
         display: grid;
         grid-template-columns: minmax(360px, 0.36fr) minmax(700px, 0.64fr);
-        gap: clamp(64px, 7vw, 120px);
+        gap: clamp(24px, 3vw, 56px);
         align-items: center;
         padding: 105px 0 112px;
       }
@@ -1867,11 +1867,11 @@ function renderNetworkPage() {
         display: block;
         transform: translate(-50%, -50%);
         object-fit: contain;
-        filter: brightness(1.14) contrast(1.08) drop-shadow(0 0 18px rgba(32, 202, 255, 0.42));
+        filter: brightness(1.14) contrast(1.08);
         mix-blend-mode: lighten;
         opacity: 0.62;
-        -webkit-mask-image: radial-gradient(ellipse at center, #000 0 48%, rgba(0, 0, 0, 0.72) 60%, transparent 78%);
-        mask-image: radial-gradient(ellipse at center, #000 0 48%, rgba(0, 0, 0, 0.72) 60%, transparent 78%);
+        -webkit-mask-image: radial-gradient(ellipse at center, #000 0 38%, rgba(0, 0, 0, 0.5) 52%, rgba(0, 0, 0, 0.15) 66%, transparent 84%);
+        mask-image: radial-gradient(ellipse at center, #000 0 38%, rgba(0, 0, 0, 0.5) 52%, rgba(0, 0, 0, 0.15) 66%, transparent 84%);
       }
       .map-arcs {
         position: absolute;
@@ -1909,7 +1909,7 @@ function renderNetworkPage() {
         padding: 0;
         border: 0;
         border-radius: 50%;
-        color: #28d5ff;
+        color: #3fe27a;
         background: transparent;
         transform: translate(-50%, -50%);
         cursor: pointer;
@@ -1919,13 +1919,13 @@ function renderNetworkPage() {
         position: absolute;
         left: 50%;
         top: 50%;
-        width: 7px;
-        height: 7px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         transform: translate(-50%, -50%);
         background: currentColor;
-        box-shadow: 0 0 16px currentColor;
-        opacity: 0.82;
+        box-shadow: 0 0 18px currentColor, 0 0 4px #fff;
+        opacity: 0.95;
         animation: pointPulse 4.6s ease-in-out infinite;
       }
       .map-point::after {
@@ -1935,21 +1935,21 @@ function renderNetworkPage() {
         top: 50%;
         width: 26px;
         height: 26px;
-        border: 1px solid rgba(40, 213, 255, 0.24);
+        border: 1px solid rgba(63, 226, 122, 0.34);
         border-radius: 50%;
         transform: translate(-50%, -50%);
         opacity: 0;
         animation: ringPulse 5.4s ease-out infinite;
       }
       .map-point.is-selected::before {
-        width: 12px;
-        height: 12px;
+        width: 14px;
+        height: 14px;
         opacity: 1;
       }
       .map-point.is-selected::after {
         width: 48px;
         height: 48px;
-        opacity: 0.34;
+        opacity: 0.42;
       }
       .map-pulse {
         position: absolute;
