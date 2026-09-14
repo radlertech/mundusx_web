@@ -61,6 +61,7 @@ writeDocsVariant({
     "GitHub Pages mirror of the public docs shape so install, device identity, and release pages can be reviewed before the final domain is wired up.",
 });
 writeMarketingHomepage();
+writeNetworkPage();
 writePublicInstallSurface();
 writePublicReleaseSurface();
 
@@ -81,6 +82,17 @@ function writeMarketingHomepage() {
   fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   fs.writeFileSync(path.join(outputDir, "index.html"), renderMarketingHomePage());
+}
+
+function writeNetworkPage() {
+  const assetDir = path.join(outputDir, "assets");
+  const networkDir = path.join(outputDir, "network");
+  fs.mkdirSync(assetDir, { recursive: true });
+  fs.mkdirSync(networkDir, { recursive: true });
+  fs.copyFileSync(path.join(repoRoot, "media/network-hero-globe.png"), path.join(assetDir, "network-hero-globe.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/network-world-map.png"), path.join(assetDir, "network-world-map.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/network-cta-mountains.png"), path.join(assetDir, "network-cta-mountains.png"));
+  fs.writeFileSync(path.join(networkDir, "index.html"), renderNetworkPage());
 }
 
 function renderMarketingHomePage() {
@@ -1215,14 +1227,14 @@ function renderMarketingHomePage() {
         <a class="brand" href="./" aria-label="MundusX home">${brandMark()}<span>MundusX</span></a>
         <div class="links" aria-label="Sections">
           <a href="./public/docs/">Product</a>
-          <a href="./public/release/">Network</a>
+          <a href="./network/">Network</a>
           <a href="./docs/">Developers</a>
           <a href="./public/install/">Pricing</a>
           <a href="./docs/device-identity/">About</a>
         </div>
         <div class="actions">
           <a class="btn ghost" href="./public/docs/">Sign in</a>
-          <a class="btn primary" href="./public/install/">Get started <span aria-hidden="true">-&gt;</span></a>
+          <a class="btn primary" href="./public/install/">Get started</a>
         </div>
       </nav>
     </header>
@@ -1234,8 +1246,8 @@ function renderMarketingHomePage() {
             <h1 id="home-title">AI that works across <span>your world.</span></h1>
             <p class="lead">Chat, build, research and run AI workloads across a secure decentralized compute network - with your projects and tools connected.</p>
             <div class="hero-buttons">
-              <a class="btn primary" href="./public/install/">Start with MundusX <span aria-hidden="true">-&gt;</span></a>
-              <a class="btn ghost" href="./public/release/">Explore the network</a>
+              <a class="btn primary" href="https://chat.mundusx.ai/">Start with MundusX</a>
+              <a class="btn ghost" href="./network/">Explore the network</a>
             </div>
             <div class="notes"><span>Start free</span><span>Sign in with Google</span><span>Connect your own computer</span></div>
           </div>
@@ -1279,7 +1291,7 @@ function renderMarketingHomePage() {
         <a class="rail-card" href="./public/docs/"><span class="rail-icon">${siteIcon("message-square")}</span><div><h3>Chat with Atlas</h3><p>Your AI companion for work, ideas and everyday tasks.</p></div><span aria-hidden="true">&gt;</span></a>
         <a class="rail-card" href="./docs/"><span class="rail-icon">${siteIcon("folder")}</span><div><h3>Projects</h3><p>Keep chats, files and work together in one place.</p></div><span aria-hidden="true">&gt;</span></a>
         <a class="rail-card" href="./docs/install/"><span class="rail-icon">${siteIcon("terminal")}</span><div><h3>Harness</h3><p>Run code on your own computer</p></div><span aria-hidden="true">&gt;</span></a>
-        <a class="rail-card" href="./public/release/"><span class="rail-icon">${siteIcon("network")}</span><div><h3>Decentralized Compute</h3><p>Contribute or use distributed compute.</p></div><span aria-hidden="true">&gt;</span></a>
+        <a class="rail-card" href="./network/"><span class="rail-icon">${siteIcon("network")}</span><div><h3>Decentralized Compute</h3><p>Contribute or use distributed compute.</p></div><span aria-hidden="true">&gt;</span></a>
       </section>
       <section class="network" aria-label="Decentralized compute network">
         <div class="network-inner">
@@ -1349,7 +1361,7 @@ function renderMarketingHomePage() {
               <p>Join a growing community of builders, researchers and businesses shaping a more open and decentralized AI future.</p>
             </div>
             <div>
-              <a class="btn primary" href="./public/install/">Get started <span aria-hidden="true">-&gt;</span></a>
+              <a class="btn primary" href="./public/install/">Get started</a>
               <small>Start free. No credit card required.</small>
             </div>
           </div>
@@ -1362,7 +1374,7 @@ function renderMarketingHomePage() {
         <a class="brand" href="./" aria-label="MundusX home">${brandMark()}<span>MundusX</span></a>
         <div class="footer-links">
           <a href="./public/docs/">Product</a>
-          <a href="./public/release/">Network</a>
+          <a href="./network/">Network</a>
           <a href="./docs/">Developers</a>
           <a href="./public/install/">Pricing</a>
           <a href="./docs/device-identity/">About</a>
@@ -1379,6 +1391,1213 @@ function renderMarketingHomePage() {
     </footer>
   </body>
 </html>`;
+}
+
+function renderNetworkPage() {
+  const logo = (className = "mark") =>
+    `<img class="${className}" src="../assets/mundusx-logo-official.svg" alt="" aria-hidden="true" />`;
+
+  const statItems = [
+    ["globe", "190", "Countries"],
+    ["cpu", "12,489", "Active nodes"],
+    ["box", "1.2M", "Compute hours/month"],
+    ["users", "350K", "Community members"],
+  ];
+
+  const activityItems = [
+    ["cyan", "Developer in Tokyo started a training job", "2 minutes ago"],
+    ["cyan", "Researcher in Berlin joined the network", "4 minutes ago"],
+    ["gold", "Compute node in New York came online", "6 minutes ago"],
+    ["rose", "User in Manila ran an inference job", "8 minutes ago"],
+  ];
+
+  const networkLocations = [
+    { id: "sf", city: "San Francisco", country: "United States", type: "Developer", active: "Active builders", x: 18, y: 45 },
+    { id: "ny", city: "New York", country: "United States", type: "Business", active: "Compute demand", x: 30, y: 43 },
+    { id: "toronto", city: "Toronto", country: "Canada", type: "Community", active: "Community users", x: 29, y: 37 },
+    { id: "sao-paulo", city: "Sao Paulo", country: "Brazil", type: "Research", active: "Research activity", x: 36, y: 69 },
+    { id: "london", city: "London", country: "United Kingdom", type: "Developer", active: "Developer activity", x: 48, y: 38 },
+    { id: "berlin", city: "Berlin", country: "Germany", type: "Research", active: "Research activity", x: 52, y: 39 },
+    { id: "dubai", city: "Dubai", country: "United Arab Emirates", type: "Compute node", active: "Compute providers", x: 61, y: 54 },
+    { id: "mumbai", city: "Mumbai", country: "India", type: "Compute node", active: "Compute providers", x: 67, y: 58 },
+    { id: "singapore", city: "Singapore", country: "Singapore", type: "Compute node", active: "Regional activity", x: 74, y: 64 },
+    { id: "tokyo", city: "Tokyo", country: "Japan", type: "Developer", active: "Developer activity", x: 82, y: 45 },
+    { id: "sydney", city: "Sydney", country: "Australia", type: "Community", active: "Community users", x: 84, y: 77 },
+    { id: "auckland", city: "Auckland", country: "New Zealand", type: "Community", active: "Users online", x: 91, y: 82, selected: true },
+  ];
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MundusX Network</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --page: #020911;
+        --panel: rgba(5, 25, 40, 0.82);
+        --panel-strong: rgba(4, 20, 34, 0.94);
+        --line: rgba(45, 192, 248, 0.28);
+        --line-bright: rgba(58, 210, 255, 0.54);
+        --text: #f2f7ff;
+        --muted: #aec1d1;
+        --soft: #7894a8;
+        --accent: #20caff;
+        --accent-2: #70e5ff;
+        --green: #2dff9c;
+        --gold: #ffd95c;
+        --rose: #ff5e72;
+        --shadow: 0 26px 72px rgba(0, 0, 0, 0.42);
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--page); scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+        background:
+          radial-gradient(circle at 64% 11%, rgba(0, 122, 255, 0.28), transparent 25rem),
+          radial-gradient(circle at 24% 41%, rgba(16, 196, 255, 0.12), transparent 34rem),
+          linear-gradient(180deg, #03121d 0%, #020912 46%, #03101a 100%);
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 22% 18%, rgba(42, 207, 255, 0.7) 0 1px, transparent 2px),
+          radial-gradient(circle at 74% 28%, rgba(42, 207, 255, 0.42) 0 1px, transparent 2px),
+          linear-gradient(90deg, rgba(53, 205, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(53, 205, 255, 0.035) 1px, transparent 1px);
+        background-size: 140px 120px, 190px 150px, 76px 76px, 76px 76px;
+        mask-image: linear-gradient(180deg, transparent, #000 12%, #000 86%, transparent);
+        opacity: 0.7;
+      }
+      a { color: inherit; text-decoration: none; }
+      svg { display: block; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid rgba(92, 216, 255, 0.18);
+        background: rgba(2, 12, 22, 0.86);
+        backdrop-filter: blur(20px);
+      }
+      .nav {
+        width: min(1740px, calc(100% - 104px));
+        height: 65px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 34px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        font-size: 19px;
+        font-weight: 800;
+      }
+      .mark { width: 45px; height: 30px; object-fit: contain; filter: drop-shadow(0 0 16px rgba(32, 202, 255, 0.48)); }
+      .brand small {
+        display: block;
+        margin-top: 2px;
+        color: #47cbff;
+        font-size: 8px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .links {
+        display: flex;
+        align-items: center;
+        gap: clamp(25px, 3vw, 48px);
+        color: #e6f0fb;
+        font-size: 13px;
+        font-weight: 650;
+      }
+      .links a { position: relative; padding: 25px 0 22px; }
+      .links a[aria-current="page"]::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 9px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        background: var(--accent);
+        box-shadow: 0 0 16px var(--accent);
+      }
+      .actions { display: flex; align-items: center; gap: 13px; }
+      .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: 1px solid var(--line-bright);
+        border-radius: 999px;
+        padding: 0 25px;
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .btn.primary {
+        color: #02101c;
+        border-color: transparent;
+        background: linear-gradient(135deg, #49dcff, #0caeff);
+        box-shadow: 0 0 28px rgba(32, 202, 255, 0.48), inset 0 1px rgba(255, 255, 255, 0.6);
+      }
+      .btn.ghost {
+        color: #f4f9ff;
+        background: rgba(2, 13, 24, 0.72);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.14);
+      }
+      .section {
+        position: relative;
+        border-bottom: 1px solid rgba(68, 191, 238, 0.18);
+      }
+      .wrap {
+        width: min(1700px, calc(100% - 108px));
+        margin: 0 auto;
+      }
+      .eyebrow {
+        display: block;
+        margin-bottom: 18px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+      .hero {
+        min-height: 680px;
+        overflow: hidden;
+        border-bottom: 0;
+        background:
+          radial-gradient(circle at 67% 49%, rgba(17, 139, 235, 0.24), transparent 30rem),
+          linear-gradient(90deg, rgba(2, 9, 17, 0.98) 0%, rgba(2, 11, 20, 0.44) 55%, rgba(2, 9, 17, 0.94) 100%);
+      }
+      .hero .wrap {
+        min-height: 680px;
+        display: grid;
+        grid-template-columns: minmax(560px, 0.72fr) minmax(620px, 1.28fr);
+        gap: 18px;
+        align-items: center;
+        padding: 52px 0 56px;
+      }
+      .hero .wrap > div:first-child {
+        position: relative;
+        z-index: 3;
+      }
+      h1 {
+        max-width: 590px;
+        margin: 0 0 22px;
+        font-size: clamp(52px, 4.45vw, 64px);
+        line-height: 1.02;
+      }
+      h1 span { color: #52d8ff; }
+      .lead {
+        max-width: 520px;
+        margin: 0;
+        color: #d9e7f2;
+        font-size: 18px;
+        line-height: 1.48;
+      }
+      .hero-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin: 36px 0 64px;
+      }
+      .mini-features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        max-width: 590px;
+      }
+      .mini-feature {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: 10px;
+        align-items: center;
+        color: #dbeaf6;
+        font-size: 10px;
+        line-height: 1.25;
+      }
+      .mini-feature b { display: block; color: #f4f9ff; font-size: 11px; }
+      .round-icon {
+        width: 41px;
+        height: 41px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(50, 210, 255, 0.38);
+        border-radius: 50%;
+        color: var(--accent);
+        background: rgba(13, 90, 128, 0.18);
+        box-shadow: 0 0 18px rgba(32, 202, 255, 0.18);
+      }
+      .round-icon svg { width: 22px; height: 22px; }
+      .globe-stage {
+        position: relative;
+        min-height: 610px;
+        z-index: 1;
+      }
+      .planet {
+        position: absolute;
+        left: 29%;
+        top: 50%;
+        width: min(1060px, 76vw);
+        aspect-ratio: 1.75;
+        transform: translate(-50%, -50%);
+        border-radius: 0;
+        background: url("../assets/network-hero-globe.png") center / contain no-repeat;
+        filter: drop-shadow(0 0 35px rgba(32, 202, 255, 0.26));
+        opacity: 0.96;
+        mix-blend-mode: screen;
+        -webkit-mask-image: radial-gradient(ellipse at 70% 50%, #000 0 47%, rgba(0, 0, 0, 0.84) 56%, transparent 76%);
+        mask-image: radial-gradient(ellipse at 70% 50%, #000 0 47%, rgba(0, 0, 0, 0.84) 56%, transparent 76%);
+      }
+      .planet::before,
+      .planet::after {
+        display: none;
+      }
+      .planet-lines {
+        position: absolute;
+        inset: -5%;
+        width: 110%;
+        height: 110%;
+        color: #26cfff;
+        opacity: 0.72;
+        display: none;
+      }
+      .planet-lines path { fill: none; stroke: currentColor; stroke-width: 1.15; opacity: 0.55; }
+      .planet-lines circle { fill: #45dcff; filter: drop-shadow(0 0 8px #20caff); }
+      .stats-card {
+        position: absolute;
+        right: 0;
+        top: 73px;
+        width: 224px;
+        padding: 22px 25px;
+        border: 1px solid var(--line-bright);
+        border-radius: 8px;
+        background: rgba(3, 20, 35, 0.86);
+        box-shadow: var(--shadow), inset 0 1px rgba(255, 255, 255, 0.08);
+      }
+      .online {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #e9f8ff;
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .online::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 14px var(--green);
+      }
+      .stats-card strong {
+        display: block;
+        margin-top: 16px;
+        font-size: 31px;
+        line-height: 1;
+      }
+      .stats-card dl { margin: 18px 0 0; }
+      .stats-card div {
+        padding: 13px 0 0;
+        border-top: 1px solid rgba(122, 214, 255, 0.17);
+      }
+      .stats-card dt { color: var(--muted); font-size: 11px; }
+      .stats-card dd { margin: 0 0 11px; color: #f0f7ff; font-size: 17px; font-weight: 800; }
+      .callout {
+        position: absolute;
+        right: 18%;
+        bottom: 160px;
+        width: 244px;
+        padding: 13px 17px;
+        border: 1px solid rgba(78, 210, 255, 0.36);
+        border-radius: 8px;
+        color: #d8eaf6;
+        background: rgba(4, 26, 43, 0.8);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .vertical-tag {
+        position: absolute;
+        right: 8px;
+        bottom: 55px;
+        color: #5bdcff;
+        font-size: 10px;
+        font-weight: 900;
+        line-height: 1.7;
+        text-transform: uppercase;
+      }
+      .metric-rail {
+        position: relative;
+        background: rgba(2, 12, 22, 0.78);
+        border-bottom: 0;
+      }
+      .metric-rail::before,
+      .metric-rail::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgba(68, 191, 238, 0.045) 18%, rgba(68, 191, 238, 0.075) 50%, rgba(68, 191, 238, 0.045) 82%, transparent);
+      }
+      .metric-rail::before { top: 0; }
+      .metric-rail::after { bottom: 0; }
+      .metric-grid {
+        width: min(1700px, calc(100% - 108px));
+        min-height: 116px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .metric {
+        position: relative;
+        display: grid;
+        grid-template-columns: 58px 1fr;
+        gap: 22px;
+        align-items: center;
+        padding: 25px 38px;
+      }
+      .metric:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 22%;
+        right: 0;
+        width: 1px;
+        height: 56%;
+        background: linear-gradient(180deg, transparent, rgba(73, 179, 222, 0.18) 50%, transparent);
+      }
+      .metric b { display: block; font-size: 26px; line-height: 1; }
+      .metric span:last-child { color: #bcd0dd; font-size: 13px; }
+      .community .wrap {
+        min-height: 700px;
+        display: grid;
+        grid-template-columns: minmax(360px, 0.36fr) minmax(700px, 0.64fr);
+        gap: clamp(64px, 7vw, 120px);
+        align-items: center;
+        padding: 105px 0 112px;
+      }
+      .community {
+        background:
+          radial-gradient(ellipse at 70% 50%, rgba(29, 174, 235, 0.1), transparent 34rem),
+          linear-gradient(180deg, rgba(2, 13, 22, 0.98), rgba(3, 21, 34, 0.9));
+        border-bottom-color: rgba(52, 142, 179, 0.1);
+      }
+      .section h2 {
+        margin: 0;
+        font-size: clamp(34px, 3.2vw, 52px);
+        line-height: 1.08;
+      }
+      .community p,
+      .centered-copy p,
+      .activity-copy p,
+      .feature-card p {
+        color: #bfd0dd;
+        font-size: 17px;
+        line-height: 1.42;
+      }
+      .community p {
+        max-width: 470px;
+        margin: 24px 0 32px;
+        color: #a4b6c6;
+        font-size: 18px;
+        line-height: 1.62;
+      }
+      .community .btn.primary {
+        width: 220px;
+        min-height: 56px;
+        padding: 0 22px;
+        color: #02101c;
+        font-size: 15px;
+        font-weight: 700;
+        background: linear-gradient(90deg, #27d7f6 0%, #18bceb 45%, #0a96dd 100%);
+        box-shadow: 0 0 24px rgba(31, 198, 243, 0.2);
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+      .community .btn.primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 0 30px rgba(31, 198, 243, 0.28);
+      }
+      .community .eyebrow {
+        color: #29c9f6;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      #community-title {
+        max-width: 440px;
+        font-size: clamp(42px, 3.55vw, 56px);
+        font-weight: 650;
+        line-height: 1.07;
+      }
+      .map-wrap {
+        position: relative;
+        min-height: 480px;
+        margin-right: min(-5vw, -48px);
+      }
+      .map-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 8% 2% 0;
+        background:
+          radial-gradient(circle at 78% 74%, rgba(38, 214, 255, 0.13), transparent 11rem),
+          radial-gradient(circle at 46% 44%, rgba(38, 214, 255, 0.11), transparent 18rem);
+        pointer-events: none;
+      }
+      .world-map {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(950px, 116%);
+        height: 480px;
+        display: block;
+        transform: translate(-50%, -50%);
+        object-fit: contain;
+        filter: brightness(1.14) contrast(1.08) drop-shadow(0 0 18px rgba(32, 202, 255, 0.42));
+        mix-blend-mode: lighten;
+        opacity: 0.62;
+        -webkit-mask-image: radial-gradient(ellipse at center, #000 0 48%, rgba(0, 0, 0, 0.72) 60%, transparent 78%);
+        mask-image: radial-gradient(ellipse at center, #000 0 48%, rgba(0, 0, 0, 0.72) 60%, transparent 78%);
+      }
+      .map-arcs {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        color: #28d5ff;
+        pointer-events: none;
+      }
+      .map-arcs path {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1;
+        opacity: 0.18;
+      }
+      .map-arcs circle {
+        fill: currentColor;
+        filter: drop-shadow(0 0 7px currentColor);
+        opacity: 0;
+        animation: arcTravel 9s ease-in-out infinite;
+      }
+      .map-arcs .arc-dot-one {
+        offset-path: path("M82 382 C168 268 302 235 428 254 C552 272 625 200 742 145");
+      }
+      .map-arcs .arc-dot-two {
+        offset-path: path("M183 216 C250 177 330 170 445 193");
+      }
+      .map-arcs circle:nth-of-type(2) { animation-delay: 3.5s; }
+      .map-point {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        color: #28d5ff;
+        background: transparent;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      }
+      .map-point::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background: currentColor;
+        box-shadow: 0 0 16px currentColor;
+        opacity: 0.82;
+        animation: pointPulse 4.6s ease-in-out infinite;
+      }
+      .map-point::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 26px;
+        height: 26px;
+        border: 1px solid rgba(40, 213, 255, 0.24);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        animation: ringPulse 5.4s ease-out infinite;
+      }
+      .map-point.is-selected::before {
+        width: 12px;
+        height: 12px;
+        opacity: 1;
+      }
+      .map-point.is-selected::after {
+        width: 48px;
+        height: 48px;
+        opacity: 0.34;
+      }
+      .map-pulse {
+        position: absolute;
+        left: 91%;
+        top: 82%;
+        width: 92px;
+        height: 92px;
+        border: 1px solid rgba(47, 211, 255, 0.44);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 30px rgba(32, 202, 255, 0.28), inset 0 0 24px rgba(32, 202, 255, 0.12);
+        pointer-events: none;
+      }
+      .map-pulse::before,
+      .map-pulse::after {
+        content: "";
+        position: absolute;
+        inset: 16px;
+        border: 1px solid rgba(47, 211, 255, 0.56);
+        border-radius: 50%;
+      }
+      .map-pulse::after {
+        inset: 32px;
+        background: var(--accent);
+        box-shadow: 0 0 18px var(--accent);
+      }
+      .map-label {
+        position: absolute;
+        left: 82%;
+        top: 66%;
+        width: 178px;
+        padding: 13px 14px;
+        border: 1px solid rgba(32, 194, 236, 0.28);
+        border-radius: 11px;
+        background: rgba(5, 28, 42, 0.92);
+        color: #a4b6c6;
+        font-size: 13px;
+        line-height: 1.35;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      .map-label::after {
+        content: "";
+        position: absolute;
+        right: 18px;
+        bottom: -35px;
+        width: 1px;
+        height: 35px;
+        background: linear-gradient(180deg, rgba(40, 213, 255, 0.36), transparent);
+        transform: rotate(34deg);
+        transform-origin: top;
+      }
+      .map-label b {
+        display: block;
+        color: #f4f8fb;
+        font-weight: 650;
+      }
+      .point-tip {
+        position: absolute;
+        left: 50%;
+        bottom: 30px;
+        width: 172px;
+        padding: 11px 12px;
+        border: 1px solid rgba(32, 194, 236, 0.24);
+        border-radius: 10px;
+        background: rgba(5, 28, 42, 0.94);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        color: #a4b6c6;
+        font-size: 12px;
+        line-height: 1.32;
+        text-align: left;
+        opacity: 0;
+        transform: translate(-50%, 6px);
+        pointer-events: none;
+        transition: opacity 160ms ease, transform 160ms ease;
+      }
+      .point-tip b {
+        display: block;
+        color: #f4f8fb;
+        font-size: 13px;
+      }
+      .map-point:hover .point-tip,
+      .map-point:focus-visible .point-tip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+      @keyframes pointPulse {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.72; }
+        50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+      }
+      @keyframes ringPulse {
+        0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.34; }
+        100% { transform: translate(-50%, -50%) scale(1.42); opacity: 0; }
+      }
+      @keyframes arcTravel {
+        0%, 18% { opacity: 0; offset-distance: 0%; }
+        25%, 60% { opacity: 0.85; }
+        74%, 100% { opacity: 0; offset-distance: 100%; }
+      }
+      .how {
+        padding: 58px 0 0;
+      }
+      .centered-copy {
+        text-align: center;
+      }
+      .centered-copy p {
+        max-width: 720px;
+        margin: 16px auto 0;
+      }
+      .flow {
+        position: relative;
+        height: 365px;
+        margin-top: 28px;
+      }
+      .flow-lines {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        color: var(--accent);
+      }
+      .flow-lines path { fill: none; stroke: currentColor; stroke-width: 2; opacity: 0.68; filter: drop-shadow(0 0 8px var(--accent)); }
+      .flow-lines circle { fill: #8eeaff; filter: drop-shadow(0 0 8px var(--accent)); }
+      .laptop-art {
+        position: absolute;
+        left: 8%;
+        top: 50%;
+        width: 230px;
+        transform: translateY(-50%);
+        text-align: center;
+      }
+      .laptop-screen {
+        width: 210px;
+        height: 118px;
+        margin: 0 auto 9px;
+        border: 2px solid rgba(73, 211, 255, 0.58);
+        border-radius: 7px 7px 2px 2px;
+        background:
+          linear-gradient(145deg, rgba(77, 184, 247, 0.15), transparent 45%),
+          linear-gradient(135deg, transparent 42%, rgba(60, 162, 232, 0.19) 43% 58%, transparent 59%),
+          rgba(3, 14, 25, 0.9);
+        box-shadow: 0 0 22px rgba(32, 202, 255, 0.25);
+      }
+      .laptop-screen::after {
+        content: "";
+        display: block;
+        width: 244px;
+        height: 18px;
+        margin: 112px 0 0 -18px;
+        border-radius: 50% 50% 7px 7px;
+        background: linear-gradient(90deg, transparent, rgba(115, 224, 255, 0.74) 11% 88%, transparent);
+      }
+      .laptop-art b,
+      .core b { display: block; font-size: 18px; }
+      .laptop-art span,
+      .core span { color: #a8bdcc; font-size: 13px; }
+      .core {
+        position: absolute;
+        left: 50%;
+        top: 53%;
+        width: 295px;
+        height: 295px;
+        transform: translate(-50%, -50%);
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        text-align: center;
+        background: radial-gradient(circle, rgba(9, 104, 152, 0.28), rgba(2, 14, 25, 0.38) 62%, rgba(38, 202, 255, 0.18) 64%, transparent 68%);
+        box-shadow: 0 0 42px rgba(32, 202, 255, 0.36);
+      }
+      .core svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        color: var(--accent);
+        opacity: 0.78;
+      }
+      .core-content { position: relative; z-index: 1; }
+      .core-content .mark { width: 62px; height: 42px; margin: 0 auto 9px; }
+      .resource-panel {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        width: 310px;
+        transform: translateY(-50%);
+        border: 1px solid var(--line-bright);
+        border-radius: 8px;
+        background: rgba(4, 25, 40, 0.9);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+      }
+      .resource-panel div {
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        gap: 17px;
+        align-items: center;
+        min-height: 72px;
+        padding: 0 28px;
+        border-bottom: 1px solid rgba(99, 202, 242, 0.18);
+        font-size: 16px;
+        font-weight: 750;
+      }
+      .resource-panel div:last-child { border-bottom: 0; }
+      .resource-panel svg { width: 34px; height: 34px; color: var(--accent); }
+      .activity .wrap {
+        min-height: 390px;
+        display: grid;
+        grid-template-columns: minmax(360px, 0.95fr) minmax(520px, 1.05fr);
+        gap: 76px;
+        align-items: center;
+        padding: 62px 0;
+      }
+      .activity-list {
+        border: 1px solid var(--line-bright);
+        border-radius: 8px;
+        background: rgba(4, 23, 38, 0.86);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+        padding: 21px 28px;
+      }
+      .activity-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 17px;
+        font-size: 16px;
+        font-weight: 800;
+      }
+      .activity-title::before {
+        content: "";
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 3px solid rgba(45, 255, 156, 0.4);
+        background: var(--green);
+        box-shadow: 0 0 16px var(--green);
+      }
+      .activity-row {
+        display: grid;
+        grid-template-columns: 16px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-height: 39px;
+        color: #d7e8f5;
+        font-size: 13px;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px currentColor;
+      }
+      .dot.gold { background: var(--gold); color: var(--gold); }
+      .dot.rose { background: var(--rose); color: var(--rose); }
+      .activity-row time { color: #7f98aa; }
+      .features {
+        padding: 57px 0 48px;
+        text-align: center;
+      }
+      .features h2 {
+        margin: 0 0 36px;
+        font-size: clamp(31px, 2.6vw, 43px);
+      }
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 34px;
+        text-align: left;
+      }
+      .feature-card {
+        min-height: 206px;
+        padding: 34px 32px;
+        border: 1px solid rgba(74, 205, 255, 0.29);
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(8, 39, 61, 0.78), rgba(4, 21, 35, 0.84));
+      }
+      .feature-card .round-icon {
+        width: 62px;
+        height: 62px;
+        margin-bottom: 24px;
+        background: rgba(26, 140, 199, 0.17);
+      }
+      .feature-card h3 {
+        margin: 0 0 12px;
+        font-size: 19px;
+      }
+      .feature-card p {
+        margin: 0;
+        font-size: 14px;
+      }
+      .cta-band {
+        padding: 0 0 36px;
+      }
+      .cta-card {
+        position: relative;
+        min-height: 282px;
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 30px;
+        align-items: center;
+        padding: 52px 53px;
+        border: 1px solid var(--line-bright);
+        border-radius: 8px;
+        overflow: hidden;
+        background:
+          linear-gradient(90deg, rgba(3, 13, 23, 0.86) 0%, rgba(3, 18, 31, 0.4) 58%, rgba(2, 10, 18, 0.9) 100%),
+          url("../assets/network-cta-mountains.png") center 58% / cover no-repeat;
+        box-shadow: var(--shadow);
+      }
+      .cta-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(34, 170, 246, 0.08), rgba(1, 8, 15, 0.35));
+        pointer-events: none;
+      }
+      .cta-card > * { position: relative; z-index: 1; }
+      .cta-card h2 {
+        max-width: 690px;
+        margin: 0 0 30px;
+        font-size: clamp(34px, 3vw, 46px);
+        line-height: 1.12;
+      }
+      .cta-actions { display: flex; gap: 18px; flex-wrap: wrap; }
+      .cta-lines {
+        justify-self: end;
+        color: #e2f3ff;
+        font-size: 17px;
+        line-height: 1.55;
+      }
+      .site-footer {
+        background: rgba(3, 14, 24, 0.94);
+        border-top: 1px solid rgba(68, 191, 238, 0.18);
+      }
+      .footer-main {
+        width: min(1700px, calc(100% - 108px));
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.6fr repeat(4, 1fr) 1.3fr;
+        gap: 52px;
+        padding: 38px 0 35px;
+      }
+      .footer-col h3 {
+        margin: 0 0 12px;
+        color: #f0f7ff;
+        font-size: 13px;
+      }
+      .footer-col a {
+        display: block;
+        margin-top: 9px;
+        color: #9fb4c6;
+        font-size: 13px;
+      }
+      .social {
+        display: flex;
+        justify-content: flex-end;
+        gap: 24px;
+        color: #c4d4e1;
+      }
+      .social svg { width: 19px; height: 19px; }
+      .footer-bottom {
+        width: min(1700px, calc(100% - 108px));
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 28px;
+        padding: 24px 0 31px;
+        border-top: 1px solid rgba(98, 180, 212, 0.17);
+        color: #7f95a7;
+        font-size: 12px;
+      }
+      .legal { display: flex; gap: 42px; }
+      @media (max-width: 1180px) {
+        .hero .wrap,
+        .community .wrap,
+        .activity .wrap {
+          grid-template-columns: 1fr;
+        }
+        .globe-stage { min-height: 540px; }
+        .planet { left: 50%; width: min(650px, 92vw); }
+        .stats-card { right: 6%; }
+        .metric-grid,
+        .feature-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .flow { height: 650px; }
+        .laptop-art { left: 50%; top: 12%; transform: translateX(-50%); }
+        .core { top: 48%; }
+        .resource-panel { right: 50%; top: 84%; transform: translate(50%, -50%); }
+        .flow-lines { display: none; }
+        .footer-main { grid-template-columns: repeat(3, 1fr); }
+        .social { justify-content: flex-start; }
+      }
+      @media (max-width: 760px) {
+        .nav,
+        .wrap,
+        .metric-grid,
+        .footer-main,
+        .footer-bottom {
+          width: min(100% - 30px, 680px);
+        }
+        .links { display: none; }
+        .actions .ghost { display: none; }
+        .hero .wrap { padding-top: 45px; }
+        h1 { font-size: 48px; }
+        .hero-buttons { margin-bottom: 38px; }
+        .mini-features,
+        .metric-grid,
+        .feature-grid,
+        .cta-card,
+        .footer-main {
+          grid-template-columns: 1fr;
+        }
+        .globe-stage { min-height: 480px; }
+        .planet { width: 430px; }
+        .stats-card {
+          position: relative;
+          top: auto;
+          right: auto;
+          width: 100%;
+          margin-top: 370px;
+        }
+        .callout,
+        .vertical-tag { display: none; }
+        .metric { border-right: 0; border-bottom: 0; padding-left: 0; padding-right: 0; }
+        .metric:not(:last-child)::after {
+          top: auto;
+          right: auto;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(73, 179, 222, 0.16) 50%, transparent);
+        }
+        .community .wrap,
+        .activity .wrap { padding: 52px 0; gap: 34px; }
+        .map-wrap { min-height: 360px; overflow: visible; }
+        .world-map { width: 760px; height: 360px; }
+        .how { padding-top: 48px; }
+        .resource-panel { width: 100%; }
+        .cta-card { padding: 36px 24px; }
+        .cta-lines { justify-self: start; }
+        .footer-bottom { flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="../" aria-label="MundusX home">${logo()}<span>MundusX</span></a>
+        <div class="links" aria-label="Sections">
+          <a href="../public/docs/">Product</a>
+          <a href="./" aria-current="page">Network</a>
+          <a href="../docs/">Developers</a>
+          <a href="../public/install/">Pricing</a>
+          <a href="../docs/device-identity/">About</a>
+        </div>
+        <div class="actions">
+          <a class="btn ghost" href="../public/docs/">Sign in</a>
+          <a class="btn primary" href="../public/install/">Get started <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="section hero" aria-labelledby="network-title">
+        <div class="wrap">
+          <div>
+            <span class="eyebrow">MundusX Network</span>
+            <h1 id="network-title">A global network for a <span>brighter tomorrow.</span></h1>
+            <p class="lead">A decentralized network of people, compute and ideas - powering a more open, accessible and intelligent future.</p>
+            <div class="hero-buttons">
+              <a class="btn primary" href="../public/install/">Join the network <span aria-hidden="true">&rarr;</span></a>
+              <a class="btn ghost" href="#global-map">Explore the map</a>
+            </div>
+            <div class="mini-features">
+              <div class="mini-feature"><span class="round-icon">${siteIcon("users")}</span><span><b>Real people</b>around the world</span></div>
+              <div class="mini-feature"><span class="round-icon">${siteIcon("cpu")}</span><span><b>Decentralized</b>compute resources</span></div>
+              <div class="mini-feature"><span class="round-icon">${siteIcon("box")}</span><span><b>A more open</b>AI ecosystem</span></div>
+            </div>
+          </div>
+          <div class="globe-stage" aria-hidden="true">
+            <div class="planet">
+              <svg class="planet-lines" viewBox="0 0 720 720">
+                <path d="M77 360C167 184 301 95 479 78C602 111 676 205 690 360C661 517 557 621 388 681C226 641 123 534 77 360Z" />
+                <path d="M91 255C253 342 401 352 676 219" />
+                <path d="M100 456C284 350 480 371 674 503" />
+                <path d="M361 48C254 196 224 368 307 670" />
+                <path d="M507 85C389 219 341 422 445 646" />
+                <path d="M82 360C229 292 382 282 680 357" />
+                <circle cx="126" cy="312" r="5" /><circle cx="209" cy="234" r="4" /><circle cx="302" cy="292" r="6" /><circle cx="372" cy="179" r="5" /><circle cx="466" cy="242" r="6" /><circle cx="563" cy="334" r="5" /><circle cx="612" cy="448" r="7" /><circle cx="392" cy="532" r="5" /><circle cx="250" cy="471" r="4" />
+              </svg>
+            </div>
+            <aside class="stats-card">
+              <span class="online">Live Network</span>
+              <strong>12,489</strong>
+              <dl>
+                <div><dd>190</dd><dt>countries</dt></div>
+                <div><dd>1.2M</dd><dt>compute hours/month</dt></div>
+                <div><dd>99.9%</dd><dt>network availability</dt></div>
+              </dl>
+            </aside>
+            <div class="callout">A developer in Singapore is running a model</div>
+            <div class="vertical-tag">Real people.<br />Real compute.<br />A brighter tomorrow.</div>
+          </div>
+        </div>
+      </section>
+      <section class="section metric-rail" aria-label="Network statistics">
+        <div class="metric-grid">
+          ${statItems
+            .map(
+              ([icon, value, label]) =>
+                `<div class="metric"><span class="round-icon">${siteIcon(icon)}</span><span><b>${value}</b><span>${label}</span></span></div>`,
+            )
+            .join("")}
+        </div>
+      </section>
+      <section class="section community" id="global-map" aria-labelledby="community-title">
+        <div class="wrap">
+          <div>
+            <span class="eyebrow">A truly global community</span>
+            <h2 id="community-title">People power<br />intelligence.</h2>
+            <p>From developers and researchers to businesses and everyday users, MundusX connects a global community contributing compute, knowledge and real-world impact.</p>
+            <a class="btn primary" href="#activity">Explore the global map <span aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="map-wrap" role="group" aria-label="Global MundusX network map showing active community and compute locations.">
+            <img class="world-map" src="../assets/network-world-map.png" alt="" aria-hidden="true" />
+            <svg class="map-arcs" viewBox="0 0 900 480" aria-hidden="true">
+              <path d="M82 382 C168 268 302 235 428 254 C552 272 625 200 742 145" />
+              <path d="M183 216 C250 177 330 170 445 193" />
+              <path d="M483 180 C510 162 537 164 566 187" />
+              <path d="M728 307 C758 342 798 372 842 394" />
+              <circle class="arc-dot-one" cx="0" cy="0" r="3" />
+              <circle class="arc-dot-two" cx="0" cy="0" r="3" />
+            </svg>
+            ${networkLocations
+              .map(
+                (location) =>
+                  `<button class="map-point${location.selected ? " is-selected" : ""}" style="--x: ${location.x}%; --y: ${location.y}%;" type="button" aria-label="${location.city}, ${location.country}. ${location.type}. ${location.active}."><span class="point-tip"><b>${location.city}, ${location.country}</b>${location.type}<br />${location.active}</span></button>`,
+              )
+              .join("")}
+            <div class="map-label"><b>Users online</b>in New Zealand</div>
+            <div class="map-pulse"></div>
+          </div>
+        </div>
+      </section>
+      <section class="section how" aria-labelledby="how-title">
+        <div class="wrap">
+          <div class="centered-copy">
+            <span class="eyebrow">How it works</span>
+            <h2 id="how-title">A more open, connected way to build.</h2>
+            <p>MundusX connects people, devices and compute resources across the world, making AI more accessible, resilient and impactful.</p>
+          </div>
+          <div class="flow" aria-label="How MundusX connects devices, the network, and workloads">
+            <svg class="flow-lines" viewBox="0 0 1500 360" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M195 176C325 79 444 84 563 176C646 239 708 185 758 176" />
+              <path d="M742 176C840 178 928 178 1018 176C1120 174 1197 79 1310 104" />
+              <circle cx="340" cy="95" r="6" /><circle cx="424" cy="142" r="5" /><circle cx="515" cy="176" r="5" /><circle cx="1212" cy="101" r="5" /><circle cx="1274" cy="128" r="5" />
+            </svg>
+            <div class="laptop-art"><div class="laptop-screen"></div><b>Your Device</b><span>Work from anywhere</span></div>
+            <div class="core">
+              ${networkCoreSvg()}
+              <div class="core-content">${logo()}<b>MundusX Network</b><span>A decentralized global<br />compute network</span></div>
+            </div>
+            <div class="resource-panel">
+              <div>${siteIcon("cpu")}AI Models</div>
+              <div>${siteIcon("database")}Compute Nodes</div>
+              <div>${siteIcon("box")}Your Workloads</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section activity" id="activity" aria-labelledby="activity-title">
+        <div class="wrap">
+          <div class="activity-copy">
+            <span class="eyebrow">Real-time activity</span>
+            <h2 id="activity-title">A living, global network.</h2>
+            <p>See the network in action. Every dot represents a real user or compute node contributing to a more open AI future.</p>
+          </div>
+          <div class="activity-list">
+            <div class="activity-title">Live activity</div>
+            ${activityItems
+              .map(
+                ([tone, text, time]) =>
+                  `<div class="activity-row"><span class="dot ${tone}"></span><span>${text}</span><time>${time}</time></div>`,
+              )
+              .join("")}
+          </div>
+        </div>
+      </section>
+      <section class="section features" aria-labelledby="features-title">
+        <div class="wrap">
+          <span class="eyebrow">Built for a brighter tomorrow</span>
+          <h2 id="features-title">More people. More compute. More possibilities:</h2>
+          <div class="feature-grid">
+            <div class="feature-card"><span class="round-icon">${siteIcon("users")}</span><h3>Global access</h3><p>AI for everyone, everywhere.</p></div>
+            <div class="feature-card"><span class="round-icon">${siteIcon("box")}</span><h3>Decentralized compute</h3><p>A resilient and independent network.</p></div>
+            <div class="feature-card"><span class="round-icon">${siteIcon("shield")}</span><h3>Your data, your control</h3><p>Private, secure and transparent.</p></div>
+            <div class="feature-card"><span class="round-icon">${siteIcon("leaf")}</span><h3>Real-world impact</h3><p>Powering innovation for a brighter tomorrow.</p></div>
+          </div>
+        </div>
+      </section>
+      <section class="section cta-band" aria-labelledby="join-title">
+        <div class="wrap">
+          <div class="cta-card">
+            <div>
+              <span class="eyebrow">Be part of the network</span>
+              <h2 id="join-title">Join a global community shaping the future of AI.</h2>
+              <div class="cta-actions">
+                <a class="btn primary" href="../public/install/">Get started <span aria-hidden="true">&rarr;</span></a>
+                <a class="btn ghost" href="../public/docs/">Learn more</a>
+              </div>
+            </div>
+            <div class="cta-lines">A more open<br />A more accessible<br />A brighter tomorrow.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="footer-main">
+        <a class="brand" href="../" aria-label="MundusX home">${logo()}<span>MundusX<small>A better tomorrow</small></span></a>
+        <div class="footer-col"><h3>Product</h3><a href="../public/docs/">Features</a><a href="../public/install/">Pricing</a><a href="../docs/install/">Roadmap</a></div>
+        <div class="footer-col"><h3>Network</h3><a href="#global-map">Global Map</a><a href="#activity">Network Stats</a><a href="#how-title">How it Works</a></div>
+        <div class="footer-col"><h3>Developers</h3><a href="../docs/">Docs</a><a href="../public/release/">API</a><a href="../docs/device-identity/">Integrations</a></div>
+        <div class="footer-col"><h3>Company</h3><a href="../docs/device-identity/">About</a><a href="../public/docs/">Careers</a><a href="../public/docs/">Contact</a></div>
+        <div class="social" aria-label="Social links">
+          <a href="../public/docs/" aria-label="GitHub">${siteIcon("github")}</a>
+          <a href="../public/docs/" aria-label="Community">${siteIcon("discord")}</a>
+          <a href="../public/docs/" aria-label="LinkedIn">${siteIcon("linkedin")}</a>
+          <a href="../public/docs/" aria-label="X">${siteIcon("x")}</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 MundusX. All rights reserved.</span>
+        <span class="legal"><a href="../public/docs/">Privacy</a><a href="../public/docs/">Terms</a><a href="../public/docs/">Cookies</a></span>
+      </div>
+    </footer>
+  </body>
+</html>`;
+}
+
+function networkCoreSvg() {
+  return `<svg viewBox="0 0 300 300" aria-hidden="true">
+    <circle cx="150" cy="150" r="139" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.48" />
+    <ellipse cx="150" cy="150" rx="92" ry="139" fill="none" stroke="currentColor" stroke-width="1" opacity="0.24" />
+    <ellipse cx="150" cy="150" rx="139" ry="54" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
+    <path d="M45 70 100 38 154 30 212 54 258 100 271 159 247 218 190 265 121 278 59 238 30 178Z" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.48" />
+    <path d="M45 70 96 116 30 178M96 116 154 30 176 103 258 100M176 103 150 150 271 159M150 150 59 238M150 150 190 265M96 116 150 150 176 103M247 218 150 150" fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.45" />
+    <g fill="currentColor"><circle cx="45" cy="70" r="3" /><circle cx="154" cy="30" r="4" /><circle cx="258" cy="100" r="4" /><circle cx="271" cy="159" r="3" /><circle cx="247" cy="218" r="3" /><circle cx="190" cy="265" r="3" /><circle cx="59" cy="238" r="3" /><circle cx="30" cy="178" r="3" /><circle cx="96" cy="116" r="3" /><circle cx="176" cy="103" r="3" /><circle cx="150" cy="150" r="3" /></g>
+  </svg>`;
 }
 
 function brandMark(className = "mark") {
@@ -1415,6 +2634,7 @@ function siteIcon(name) {
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/>',
     terminal: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 9 3 3-3 3"/><path d="M13 15h3"/>',
     users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/>',
+    x: '<path d="M18 2 6 22"/><path d="m6 2 12 20"/>',
     youtube: '<path d="M22.5 8.5a3 3 0 0 0-2.1-2.1C18.5 6 12 6 12 6s-6.5 0-8.4.4a3 3 0 0 0-2.1 2.1A31 31 0 0 0 1 12a31 31 0 0 0 .5 3.5 3 3 0 0 0 2.1 2.1C5.5 18 12 18 12 18s6.5 0 8.4-.4a3 3 0 0 0 2.1-2.1A31 31 0 0 0 23 12a31 31 0 0 0-.5-3.5Z"/><path d="m10 15 5-3-5-3Z"/>',
     zap: '<path d="M13 2 3 14h8l-1 8 10-12h-8l1-8Z"/>',
   };
