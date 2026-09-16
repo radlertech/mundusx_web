@@ -90,7 +90,7 @@ function writeNetworkPage() {
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(networkDir, { recursive: true });
   fs.copyFileSync(path.join(repoRoot, "media/network-hero-globe.png"), path.join(assetDir, "network-hero-globe.png"));
-  fs.copyFileSync(path.join(repoRoot, "media/network-world-map.png"), path.join(assetDir, "network-world-map.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/network-world-map-transparent.png"), path.join(assetDir, "network-world-map-transparent.png"));
   fs.copyFileSync(path.join(repoRoot, "media/network-cta-mountains.png"), path.join(assetDir, "network-cta-mountains.png"));
   fs.writeFileSync(path.join(networkDir, "index.html"), renderNetworkPage());
 }
@@ -1412,19 +1412,78 @@ function renderNetworkPage() {
   ];
 
   const networkLocations = [
-    { id: "sf", city: "San Francisco", country: "United States", type: "Developer", active: "Active builders", x: 18, y: 45 },
-    { id: "ny", city: "New York", country: "United States", type: "Business", active: "Compute demand", x: 30, y: 43 },
-    { id: "toronto", city: "Toronto", country: "Canada", type: "Community", active: "Community users", x: 29, y: 37 },
-    { id: "sao-paulo", city: "Sao Paulo", country: "Brazil", type: "Research", active: "Research activity", x: 36, y: 69 },
-    { id: "london", city: "London", country: "United Kingdom", type: "Developer", active: "Developer activity", x: 48, y: 38 },
-    { id: "berlin", city: "Berlin", country: "Germany", type: "Research", active: "Research activity", x: 52, y: 39 },
-    { id: "dubai", city: "Dubai", country: "United Arab Emirates", type: "Compute node", active: "Compute providers", x: 61, y: 54 },
-    { id: "mumbai", city: "Mumbai", country: "India", type: "Compute node", active: "Compute providers", x: 67, y: 58 },
-    { id: "singapore", city: "Singapore", country: "Singapore", type: "Compute node", active: "Regional activity", x: 74, y: 64 },
-    { id: "tokyo", city: "Tokyo", country: "Japan", type: "Developer", active: "Developer activity", x: 82, y: 45 },
-    { id: "sydney", city: "Sydney", country: "Australia", type: "Community", active: "Community users", x: 84, y: 77 },
-    { id: "auckland", city: "Auckland", country: "New Zealand", type: "Community", active: "Users online", x: 91, y: 82, selected: true },
+    { id: "sf", city: "San Francisco", country: "United States", type: "Developer", active: "Active builders", x: 20.1, y: 39 },
+    { id: "ny", city: "New York", country: "United States", type: "Business", active: "Compute demand", x: 26.9, y: 37.4 },
+    { id: "toronto", city: "Toronto", country: "Canada", type: "Community", active: "Community users", x: 24.2, y: 31.2 },
+    { id: "sao-paulo", city: "Sao Paulo", country: "Brazil", type: "Research", active: "Research activity", x: 37.1, y: 66.4 },
+    { id: "london", city: "London", country: "United Kingdom", type: "Developer", active: "Developer activity", x: 46.9, y: 31.4 },
+    { id: "berlin", city: "Berlin", country: "Germany", type: "Research", active: "Research activity", x: 49.8, y: 31.1 },
+    { id: "dubai", city: "Dubai", country: "United Arab Emirates", type: "Compute node", active: "Compute providers", x: 61.1, y: 45.2 },
+    { id: "mumbai", city: "Mumbai", country: "India", type: "Compute node", active: "Compute providers", x: 66.8, y: 53.2 },
+    { id: "singapore", city: "Singapore", country: "Singapore", type: "Compute node", active: "Regional activity", x: 73.2, y: 60.5 },
+    { id: "tokyo", city: "Tokyo", country: "Japan", type: "Developer", active: "Developer activity", x: 80.4, y: 40.3 },
+    { id: "sydney", city: "Sydney", country: "Australia", type: "Community", active: "Community users", x: 82.3, y: 74.6 },
+    { id: "auckland", city: "Auckland", country: "New Zealand", type: "Community", active: "Users online", x: 89.2, y: 81.8 },
   ];
+
+  const hiwIconMap = hiwDeviceIconMap();
+  const hiwLocs = hiwLocations();
+  const hiwFirst = hiwLocs[0];
+  const hiwMemberSlots = hiwFirst.devicesOrder
+    .map((type, i) => hiwMemberCardHTML(type, hiwAvatarHues()[i], hiwIconMap))
+    .join("\n            ");
+  const hiwDotsHtml = hiwLocs
+    .map((_, i) => `<button class="hiw-dot${i === 0 ? " is-active" : ""}" type="button" aria-label="Show ${hiwLocs[i].city} community" data-index="${i}"></button>`)
+    .join("");
+  const hiwTags = hiwGlobeTags();
+  const hiwAmbientNodes = hiwGlobeAmbientNodes();
+  const hiwRoutes = hiwGlobeRoutes();
+  const hiwTagsHtml = hiwTags
+    .map(
+      (t) =>
+        `<div class="hiw-tag${t.city === hiwFirst.city ? " is-active" : ""}" data-city="${t.city}"><div class="hiw-tag-card"><b>${t.city}</b><span>${t.country}</span></div></div>`,
+    )
+    .join("");
+  const hiwLocationsForClient = hiwLocs.map((l) => ({
+    city: l.city,
+    country: l.country,
+    online: l.online,
+    members: hiwFormatK(l.members),
+    devices: l.devices,
+    devicesOrder: l.devicesOrder,
+  }));
+  const hiwConnectorsA = [
+    { d: "M468 128 C 528 116 664 124 710 158", dur: 4.2, delay: 0, start: [468, 128], end: [710, 158] },
+    { d: "M468 178 C 528 168 622 181 657 212", dur: 5.1, delay: 0.6, reverse: true, start: [468, 178], end: [657, 212] },
+    { d: "M468 228 C 532 225 610 244 638 260", dur: 3.8, delay: 1.2, start: [468, 228], end: [638, 260] },
+    { d: "M468 288 C 528 288 605 288 635 288", dur: 5.8, delay: 0.3, start: [468, 288], end: [635, 288] },
+    { d: "M468 348 C 532 351 609 332 637 316", dur: 4.6, delay: 1.6, start: [468, 348], end: [637, 316] },
+    { d: "M468 398 C 528 408 620 395 655 364", dur: 4.9, delay: 0.9, reverse: true, start: [468, 398], end: [655, 364] },
+    { d: "M468 448 C 528 460 658 452 704 418", dur: 4.4, delay: 2.1, start: [468, 448], end: [704, 418] },
+  ];
+  const hiwConnectorsB = [
+    { d: "M997 220 C 1025 220 1082 224 1100 228", dur: 3.6, delay: 0.4, start: [997, 220], end: [1100, 228] },
+    { d: "M1009 250 C 1035 250 1088 252 1100 253", dur: 4.4, delay: 1.1, start: [1009, 250], end: [1100, 253] },
+    { d: "M1015 278 C 1038 278 1090 278 1100 278", dur: 4.9, delay: 0, reverse: true, start: [1015, 278], end: [1100, 278] },
+    { d: "M1015 298 C 1038 298 1090 298 1100 298", dur: 4.1, delay: 1.7, start: [1015, 298], end: [1100, 298] },
+    { d: "M1011 326 C 1037 326 1088 324 1100 323", dur: 5.3, delay: 0.8, start: [1011, 326], end: [1100, 323] },
+    { d: "M999 356 C 1027 356 1082 352 1100 348", dur: 3.9, delay: 1.4, reverse: true, start: [999, 356], end: [1100, 348] },
+  ];
+  const hiwConnectorsC = [
+    { d: "M1242 238 C 1260 214 1283 198 1310 198", dur: 3.4, delay: 0.2, start: [1242, 238], end: [1310, 198] },
+    { d: "M1242 288 C 1264 288 1287 288 1310 288", dur: 4.7, delay: 1, start: [1242, 288], end: [1310, 288] },
+    { d: "M1242 338 C 1260 362 1283 378 1310 378", dur: 4, delay: 0.5, start: [1242, 338], end: [1310, 378] },
+  ];
+  const hiwConnectorMarkup = (list) =>
+    list
+      .map((c) => {
+        const timing = `style="animation-duration:${c.dur}s;animation-delay:${c.delay}s"`;
+        const reverse = c.reverse ? " is-reverse" : "";
+        const start = c.start ? `<circle class="hiw-port is-start${reverse}" cx="${c.start[0]}" cy="${c.start[1]}" r="4" ${timing}/>` : "";
+        const end = c.end ? `<circle class="hiw-port is-end${reverse}" cx="${c.end[0]}" cy="${c.end[1]}" r="4" ${timing}/>` : "";
+        return `<path d="${c.d}"/>${start}${end}<circle r="3.2" class="hiw-packet${c.reverse ? " is-reverse" : ""}" style="offset-path:path('${c.d}');animation-duration:${c.dur}s;animation-delay:${c.delay}s"/>`;
+      })
+      .join("");
 
   return `<!doctype html>
 <html lang="en">
@@ -1650,18 +1709,18 @@ function renderNetworkPage() {
       }
       .planet {
         position: absolute;
-        left: 29%;
+        left: 31%;
         top: 50%;
-        width: min(1060px, 76vw);
-        aspect-ratio: 1.75;
+        width: min(700px, 54vw);
+        aspect-ratio: 1;
         transform: translate(-50%, -50%);
         border-radius: 0;
         background: url("../assets/network-hero-globe.png") center / contain no-repeat;
         filter: drop-shadow(0 0 35px rgba(32, 202, 255, 0.26));
         opacity: 0.96;
         mix-blend-mode: screen;
-        -webkit-mask-image: radial-gradient(ellipse at 70% 50%, #000 0 47%, rgba(0, 0, 0, 0.84) 56%, transparent 76%);
-        mask-image: radial-gradient(ellipse at 70% 50%, #000 0 47%, rgba(0, 0, 0, 0.84) 56%, transparent 76%);
+        -webkit-mask-image: radial-gradient(circle closest-side at center, #000 0 58%, rgba(0, 0, 0, 0.7) 70%, transparent 86%);
+        mask-image: radial-gradient(circle closest-side at center, #000 0 58%, rgba(0, 0, 0, 0.7) 70%, transparent 86%);
       }
       .planet::before,
       .planet::after {
@@ -1858,20 +1917,27 @@ function renderNetworkPage() {
           radial-gradient(circle at 46% 44%, rgba(38, 214, 255, 0.11), transparent 18rem);
         pointer-events: none;
       }
-      .world-map {
+      .map-plane {
         position: absolute;
         left: 50%;
         top: 50%;
         width: min(950px, 116%);
-        height: 480px;
-        display: block;
+        aspect-ratio: 1672 / 941;
         transform: translate(-50%, -50%);
-        object-fit: contain;
-        filter: brightness(1.14) contrast(1.08);
-        mix-blend-mode: lighten;
-        opacity: 0.62;
-        -webkit-mask-image: radial-gradient(ellipse at center, #000 0 38%, rgba(0, 0, 0, 0.5) 52%, rgba(0, 0, 0, 0.15) 66%, transparent 84%);
-        mask-image: radial-gradient(ellipse at center, #000 0 38%, rgba(0, 0, 0, 0.5) 52%, rgba(0, 0, 0, 0.15) 66%, transparent 84%);
+      }
+      .world-map {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        transform: none;
+        object-fit: cover;
+        filter: brightness(1.08) contrast(1.05);
+        mix-blend-mode: screen;
+        opacity: 0.5;
+        -webkit-mask-image: radial-gradient(ellipse at center, #000 0 42%, rgba(0, 0, 0, 0.54) 58%, rgba(0, 0, 0, 0.16) 72%, transparent 86%);
+        mask-image: radial-gradient(ellipse at center, #000 0 42%, rgba(0, 0, 0, 0.54) 58%, rgba(0, 0, 0, 0.16) 72%, transparent 86%);
       }
       .map-arcs {
         position: absolute;
@@ -1884,20 +1950,20 @@ function renderNetworkPage() {
       .map-arcs path {
         fill: none;
         stroke: currentColor;
-        stroke-width: 1;
-        opacity: 0.18;
+        stroke-width: 0.18;
+        opacity: 0.055;
       }
       .map-arcs circle {
         fill: currentColor;
-        filter: drop-shadow(0 0 7px currentColor);
+        filter: drop-shadow(0 0 5px currentColor);
         opacity: 0;
-        animation: arcTravel 9s ease-in-out infinite;
+        display: none;
       }
       .map-arcs .arc-dot-one {
-        offset-path: path("M82 382 C168 268 302 235 428 254 C552 272 625 200 742 145");
+        offset-path: path("M24 30 C 32 18 42 24 46.4 30.8 C 51 35 56 37 61.5 45.5 C 66 50 70 55 74.5 61.2 C 78 67 82 71 82.5 73.3");
       }
       .map-arcs .arc-dot-two {
-        offset-path: path("M183 216 C250 177 330 170 445 193");
+        offset-path: path("M20.5 38.2 C 23 33 25 35 26.5 36.7 C 34 44 37 56 37 65.1 C 50 54 62 47 74.5 61.2");
       }
       .map-arcs circle:nth-of-type(2) { animation-delay: 3.5s; }
       .map-point {
@@ -1951,61 +2017,6 @@ function renderNetworkPage() {
         height: 48px;
         opacity: 0.42;
       }
-      .map-pulse {
-        position: absolute;
-        left: 91%;
-        top: 82%;
-        width: 92px;
-        height: 92px;
-        border: 1px solid rgba(47, 211, 255, 0.44);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 30px rgba(32, 202, 255, 0.28), inset 0 0 24px rgba(32, 202, 255, 0.12);
-        pointer-events: none;
-      }
-      .map-pulse::before,
-      .map-pulse::after {
-        content: "";
-        position: absolute;
-        inset: 16px;
-        border: 1px solid rgba(47, 211, 255, 0.56);
-        border-radius: 50%;
-      }
-      .map-pulse::after {
-        inset: 32px;
-        background: var(--accent);
-        box-shadow: 0 0 18px var(--accent);
-      }
-      .map-label {
-        position: absolute;
-        left: 82%;
-        top: 66%;
-        width: 178px;
-        padding: 13px 14px;
-        border: 1px solid rgba(32, 194, 236, 0.28);
-        border-radius: 11px;
-        background: rgba(5, 28, 42, 0.92);
-        color: #a4b6c6;
-        font-size: 13px;
-        line-height: 1.35;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      }
-      .map-label::after {
-        content: "";
-        position: absolute;
-        right: 18px;
-        bottom: -35px;
-        width: 1px;
-        height: 35px;
-        background: linear-gradient(180deg, rgba(40, 213, 255, 0.36), transparent);
-        transform: rotate(34deg);
-        transform-origin: top;
-      }
-      .map-label b {
-        display: block;
-        color: #f4f8fb;
-        font-weight: 650;
-      }
       .point-tip {
         position: absolute;
         left: 50%;
@@ -2049,7 +2060,8 @@ function renderNetworkPage() {
         74%, 100% { opacity: 0; offset-distance: 100%; }
       }
       .how {
-        padding: 58px 0 0;
+        padding: 64px 0 76px;
+        overflow: clip;
       }
       .centered-copy {
         text-align: center;
@@ -2058,101 +2070,468 @@ function renderNetworkPage() {
         max-width: 720px;
         margin: 16px auto 0;
       }
-      .flow {
+      .how h2 span { color: var(--accent); }
+
+      /* ---- flow shell ---- */
+      .hiw-flow {
         position: relative;
-        height: 365px;
-        margin-top: 28px;
+        min-height: 600px;
+        margin-top: 44px;
+        overflow: visible;
       }
-      .flow-lines {
+      .hiw-connectors {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-        color: var(--accent);
+        color: #28c9f5;
+        pointer-events: none;
+        z-index: 3;
       }
-      .flow-lines path { fill: none; stroke: currentColor; stroke-width: 2; opacity: 0.68; filter: drop-shadow(0 0 8px var(--accent)); }
-      .flow-lines circle { fill: #8eeaff; filter: drop-shadow(0 0 8px var(--accent)); }
-      .laptop-art {
+      .hiw-connectors path { fill: none; stroke: currentColor; stroke-width: 1.2; opacity: 0.28; }
+      .hiw-connectors .hiw-port {
+        fill: #28c9f5;
+        opacity: 0.16;
+        filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
+        animation: hiwPortStart 5s ease-in-out infinite;
+      }
+      .hiw-connectors .hiw-port.is-end {
+        animation-name: hiwPortEnd;
+      }
+      .hiw-connectors .hiw-port.is-reverse {
+        animation-direction: reverse;
+      }
+      .hiw-connectors .hiw-packet {
+        fill: #eafcff;
+        filter: drop-shadow(0 0 7px #29d5ff) drop-shadow(0 0 3px #fff);
+        opacity: 0;
+        animation: hiwParticle 5s ease-in-out infinite;
+      }
+      .hiw-connectors .hiw-packet.is-reverse { animation-direction: reverse; }
+      @keyframes hiwParticle {
+        0%, 8% { opacity: 0; offset-distance: 0%; }
+        14%, 22% { opacity: 1; }
+        50% { opacity: 0.9; }
+        78%, 88% { opacity: 1; }
+        96%, 100% { opacity: 0; offset-distance: 100%; }
+      }
+      @keyframes hiwPortStart {
+        0%, 7% {
+          opacity: 0.18;
+          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
+        }
+        12%, 18% {
+          opacity: 0.95;
+          filter: drop-shadow(0 0 10px rgba(41, 213, 255, 0.92)) drop-shadow(0 0 2px #eafcff);
+        }
+        28%, 100% {
+          opacity: 0.18;
+          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
+        }
+      }
+      @keyframes hiwPortEnd {
+        0%, 72% {
+          opacity: 0.18;
+          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
+        }
+        82%, 91% {
+          opacity: 0.98;
+          filter: drop-shadow(0 0 12px rgba(41, 213, 255, 0.95)) drop-shadow(0 0 2px #eafcff);
+        }
+        100% {
+          opacity: 0.18;
+          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
+        }
+      }
+
+      /* ---- community card ---- */
+      .hiw-community {
         position: absolute;
-        left: 8%;
+        left: 0;
         top: 50%;
-        width: 230px;
         transform: translateY(-50%);
-        text-align: center;
+        z-index: 4;
+        width: clamp(400px, 27vw, 468px);
+        padding: 22px 22px 20px;
+        border: 1px solid rgba(32, 197, 245, 0.42);
+        border-radius: 16px;
+        background: rgba(3, 21, 34, 0.82);
+        backdrop-filter: blur(6px);
+        box-shadow: 0 0 35px rgba(20, 188, 240, 0.05);
       }
-      .laptop-screen {
-        width: 210px;
-        height: 118px;
-        margin: 0 auto 9px;
-        border: 2px solid rgba(73, 211, 255, 0.58);
-        border-radius: 7px 7px 2px 2px;
-        background:
-          linear-gradient(145deg, rgba(77, 184, 247, 0.15), transparent 45%),
-          linear-gradient(135deg, transparent 42%, rgba(60, 162, 232, 0.19) 43% 58%, transparent 59%),
-          rgba(3, 14, 25, 0.9);
-        box-shadow: 0 0 22px rgba(32, 202, 255, 0.25);
+      .hiw-community-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
       }
-      .laptop-screen::after {
-        content: "";
-        display: block;
-        width: 244px;
-        height: 18px;
-        margin: 112px 0 0 -18px;
-        border-radius: 50% 50% 7px 7px;
-        background: linear-gradient(90deg, transparent, rgba(115, 224, 255, 0.74) 11% 88%, transparent);
+      .hiw-community-loc { display: flex; align-items: flex-start; gap: 10px; }
+      .hiw-community-loc svg { width: 34px; height: 34px; color: var(--accent); flex: none; }
+      .hiw-city { margin: 0; font-size: 21px; font-weight: 650; color: #f4f9ff; transition: opacity 220ms ease; }
+      .hiw-sub { margin: 4px 0 0; font-size: 14px; color: #9fb2c2; transition: opacity 220ms ease; }
+      .hiw-live {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 3px;
+        color: #d7f3ff;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
       }
-      .laptop-art b,
-      .core b { display: block; font-size: 18px; }
-      .laptop-art span,
-      .core span { color: #a8bdcc; font-size: 13px; }
-      .core {
+      .hiw-live .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 10px var(--green);
+        animation: hiwLiveBlink 2.4s ease-in-out infinite;
+      }
+      .hiw-nav {
         position: absolute;
-        left: 50%;
-        top: 53%;
-        width: 295px;
-        height: 295px;
-        transform: translate(-50%, -50%);
+        top: 50%;
+        z-index: 2;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(70, 200, 245, 0.32);
+        border-radius: 50%;
+        background: rgba(3, 16, 27, 0.86);
+        color: #cdeeff;
+        font-size: 15px;
+        line-height: 1;
+        cursor: pointer;
+        transform: translateY(-50%);
+      }
+      .hiw-nav.prev { left: -15px; }
+      .hiw-nav.next { right: -15px; }
+      .hiw-member-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 9px;
+        margin-top: 18px;
+      }
+      .hiw-member {
+        padding: 10px 10px 9px;
+        border: 1px solid rgba(28, 171, 220, 0.3);
+        border-radius: 9px;
+        background: rgba(4, 26, 40, 0.6);
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 450ms ease, transform 450ms ease;
+      }
+      .hiw-member.is-hidden { opacity: 0; transform: translateY(6px); }
+      .hiw-member-top { display: flex; align-items: center; gap: 6px; }
+      .hiw-avatar {
+        width: 30px;
+        height: 30px;
+        flex: none;
         display: grid;
         place-items: center;
         border-radius: 50%;
-        text-align: center;
-        background: radial-gradient(circle, rgba(9, 104, 152, 0.28), rgba(2, 14, 25, 0.38) 62%, rgba(38, 202, 255, 0.18) 64%, transparent 68%);
-        box-shadow: 0 0 42px rgba(32, 202, 255, 0.36);
+        color: #eafcff;
+        background: linear-gradient(150deg, hsl(var(--hue) 78% 52%), hsl(calc(var(--hue) + 26) 70% 34%));
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
       }
-      .core svg {
+      .hiw-avatar svg { width: 17px; height: 17px; }
+      .hiw-device { width: 30px; height: 30px; color: #7fdcff; }
+      .hiw-device svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.4; }
+      .hiw-member-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 9px;
+        color: #a9bdcc;
+        font-size: 11.5px;
+      }
+      .hiw-member-status .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 8px var(--green);
+        flex: none;
+      }
+      .hiw-dots { display: flex; justify-content: center; gap: 6px; margin-top: 16px; }
+      .hiw-dot {
+        width: 6px;
+        height: 6px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(120, 165, 190, 0.4);
+        cursor: pointer;
+      }
+      .hiw-dot.is-active { width: 16px; border-radius: 4px; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+      .hiw-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(54, 148, 181, 0.22);
+        text-align: center;
+      }
+      .hiw-stats div { position: relative; }
+      .hiw-stats div:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 8%;
+        right: 0;
+        width: 1px;
+        height: 84%;
+        background: rgba(54, 148, 181, 0.25);
+      }
+      .hiw-stats b { display: block; font-size: 21px; font-weight: 650; color: var(--accent); }
+      .hiw-stats span { color: #91a8ba; font-size: 12px; }
+
+      /* ---- globe ---- */
+      .hiw-globe-stage {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        width: clamp(420px, 31vw, 560px);
+        aspect-ratio: 1;
+        overflow: visible;
+        background: transparent;
+      }
+      .hiw-globe-canvas {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-        color: var(--accent);
-        opacity: 0.78;
+        display: block;
+        background: transparent;
+        border-radius: 0;
+        -webkit-mask-image: radial-gradient(circle, #000 60%, rgba(0, 0, 0, 0.5) 70%, transparent 80%);
+        mask-image: radial-gradient(circle, #000 60%, rgba(0, 0, 0, 0.5) 70%, transparent 80%);
       }
-      .core-content { position: relative; z-index: 1; }
-      .core-content .mark { width: 62px; height: 42px; margin: 0 auto 9px; }
-      .resource-panel {
+      .hiw-globe-fallback {
+        position: absolute;
+        inset: 6%;
+        border-radius: 50%;
+        background: radial-gradient(circle at 34% 30%, rgba(20, 90, 130, 0.5), rgba(2, 16, 27, 0.92) 68%);
+        box-shadow: 0 0 60px rgba(32, 202, 255, 0.22);
+        opacity: 0;
+        transition: opacity 400ms ease;
+      }
+      .hiw-globe-fallback.is-visible { opacity: 1; }
+      .hiw-globe-core {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 62%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 2;
+      }
+      .hiw-globe-core::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 230%;
+        height: 230%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(2, 12, 20, 0.72) 0%, rgba(2, 12, 20, 0.32) 52%, transparent 75%);
+        z-index: -1;
+      }
+      .hiw-globe-core .mark { width: 46px; height: 31px; margin: 0 auto 8px; }
+      .hiw-globe-core b { display: block; font-size: 15px; font-weight: 700; color: #fff; }
+      .hiw-globe-core b span { color: var(--accent); }
+      .hiw-globe-core p { margin: 5px 0 0; color: #9fb2c2; font-size: 11.5px; line-height: 1.35; }
+      .hiw-tag {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 260ms ease;
+        will-change: transform, opacity;
+        z-index: 3;
+      }
+      .hiw-tag-card {
+        position: absolute;
+        left: 14px;
+        top: -17px;
+        width: 116px;
+        padding: 7px 9px;
+        border: 1px solid rgba(30, 194, 240, 0.3);
+        border-radius: 7px;
+        background: rgba(2, 18, 29, 0.9);
+        line-height: 1.25;
+        white-space: nowrap;
+        transition: left 260ms ease, right 260ms ease, top 260ms ease;
+      }
+      .hiw-tag.is-left .hiw-tag-card { left: auto; right: 14px; }
+      .hiw-tag.is-bottom .hiw-tag-card { top: -3px; }
+      .hiw-tag-card b { display: block; color: #fff; font-size: 12px; font-weight: 600; }
+      .hiw-tag-card span { color: #8ea8ba; font-size: 10.5px; }
+      .hiw-tag.is-active .hiw-tag-card { border-color: rgba(70, 220, 255, 0.7); box-shadow: 0 0 16px rgba(32, 202, 255, 0.32); }
+      .hiw-tag-lines {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        overflow: visible;
+        pointer-events: none;
+      }
+      .hiw-tag-line {
+        fill: none;
+        stroke: rgba(72, 205, 255, 0.5);
+        stroke-width: 1.1;
+        filter: drop-shadow(0 0 2px rgba(40, 180, 255, 0.35));
+      }
+      .hiw-tag-line-dot {
+        fill: #cdf4ff;
+        filter: drop-shadow(0 0 5px rgba(70, 220, 255, 0.9));
+      }
+
+      /* ---- distributed compute ---- */
+      .hiw-compute {
+        position: absolute;
+        left: 71%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 4;
+        width: 140px;
+        text-align: center;
+      }
+      .hiw-server {
+        height: 38px;
+        margin-bottom: 9px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 11px;
+        border: 1px solid rgba(53, 215, 255, 0.4);
+        border-radius: 6px;
+        background: linear-gradient(180deg, rgba(9, 34, 52, 0.92), rgba(3, 16, 27, 0.94));
+      }
+      .hiw-server .slots { flex: 1; display: flex; gap: 3px; }
+      .hiw-server .slots span { flex: 1; height: 8px; border-radius: 1px; background: rgba(64, 150, 190, 0.3); }
+      .hiw-server .led {
+        width: 6px;
+        height: 6px;
+        flex: none;
+        border-radius: 50%;
+        background: #45dcff;
+        box-shadow: 0 0 8px #29d5ff;
+        animation: hiwLed 3.8s ease-in-out infinite;
+      }
+      .hiw-server:nth-child(1) .led { animation-duration: 3.7s; }
+      .hiw-server:nth-child(2) .led { animation-duration: 4.4s; animation-delay: 0.6s; }
+      .hiw-server:nth-child(3) .led { animation-duration: 3.1s; animation-delay: 1.1s; }
+      .hiw-compute-label { margin-top: 4px; color: #f4f9ff; font-size: 13px; font-weight: 650; line-height: 1.3; }
+
+      /* ---- capability card ---- */
+      .hiw-capability {
         position: absolute;
         right: 0;
         top: 50%;
-        width: 310px;
         transform: translateY(-50%);
-        border: 1px solid var(--line-bright);
-        border-radius: 8px;
-        background: rgba(4, 25, 40, 0.9);
-        box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+        z-index: 4;
+        width: clamp(300px, 20vw, 340px);
+        border: 1px solid rgba(27, 184, 231, 0.38);
+        border-radius: 16px;
+        background: rgba(3, 22, 35, 0.88);
+        overflow: visible;
       }
-      .resource-panel div {
+      .hiw-capability::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: rgba(3, 22, 35, 0.88);
+        z-index: -1;
+      }
+      .hiw-cap-row {
+        position: relative;
         display: grid;
-        grid-template-columns: 42px 1fr;
-        gap: 17px;
+        grid-template-columns: 48px 1fr;
+        gap: 15px;
         align-items: center;
-        min-height: 72px;
-        padding: 0 28px;
-        border-bottom: 1px solid rgba(99, 202, 242, 0.18);
-        font-size: 16px;
-        font-weight: 750;
+        min-height: 103px;
+        padding: 0 22px;
+        border-bottom: 1px solid rgba(54, 148, 181, 0.2);
+        transition: background 300ms ease;
       }
-      .resource-panel div:last-child { border-bottom: 0; }
-      .resource-panel svg { width: 34px; height: 34px; color: var(--accent); }
+      .hiw-cap-row::before {
+        content: "";
+        position: absolute;
+        left: -5px;
+        top: 50%;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        transform: translateY(-50%);
+        background: #28c9f5;
+        box-shadow: 0 0 12px rgba(40, 201, 245, 0.75);
+      }
+      .hiw-cap-row:last-child { border-bottom: 0; }
+      .hiw-cap-row .round-icon { transition: box-shadow 700ms ease, transform 700ms ease; }
+      .hiw-cap-row.is-pulsing .round-icon { box-shadow: 0 0 26px rgba(32, 202, 255, 0.5); transform: scale(1.08); }
+      .hiw-cap-row b { display: block; color: #fff; font-size: 16px; font-weight: 700; }
+      .hiw-cap-row span { color: #9fb2c2; font-size: 13px; }
+
+      /* ---- bottom strip ---- */
+      .hiw-strip {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px 54px;
+        margin-top: 60px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(68, 191, 238, 0.15);
+      }
+      .hiw-strip-item { position: relative; display: flex; align-items: center; gap: 13px; padding-right: 54px; }
+      .hiw-strip-item:last-child { padding-right: 0; }
+      .hiw-strip-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        width: 1px;
+        height: 34px;
+        transform: translateY(-50%);
+        background: rgba(122, 214, 255, 0.17);
+      }
+      .hiw-strip-item .round-icon { width: 40px; height: 40px; flex: none; }
+      .hiw-strip-item .round-icon svg { width: 20px; height: 20px; }
+      .hiw-strip-item b { display: block; color: #fff; font-size: 14px; }
+      .hiw-strip-item span { color: #91a8ba; font-size: 12.5px; }
+
+      @keyframes hiwBreathe {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-50%, -50%) scale(1.006); }
+      }
+      @keyframes hiwBreatheStatic {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.006); }
+      }
+      @keyframes hiwLed {
+        0%, 100% { opacity: 0.55; box-shadow: 0 0 6px #29d5ff; }
+        50% { opacity: 1; box-shadow: 0 0 12px #45dcff; }
+      }
+      @keyframes hiwLiveBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.55; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hiw-globe-stage,
+        .hiw-server .led,
+        .hiw-live .dot,
+        .hiw-connectors .hiw-packet,
+        .hiw-connectors .hiw-port {
+          animation: none !important;
+        }
+        .hiw-connectors .hiw-packet { opacity: 0.55; }
+        .hiw-connectors .hiw-port { opacity: 0.45; }
+      }
       .activity .wrap {
         min-height: 390px;
         display: grid;
@@ -2328,17 +2707,41 @@ function renderNetworkPage() {
           grid-template-columns: 1fr;
         }
         .globe-stage { min-height: 540px; }
-        .planet { left: 50%; width: min(650px, 92vw); }
+        .planet { left: 50%; width: min(620px, 88vw); }
         .stats-card { right: 6%; }
         .metric-grid,
         .feature-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        .flow { height: 650px; }
-        .laptop-art { left: 50%; top: 12%; transform: translateX(-50%); }
-        .core { top: 48%; }
-        .resource-panel { right: 50%; top: 84%; transform: translate(50%, -50%); }
-        .flow-lines { display: none; }
+        .hiw-flow {
+          position: relative;
+          min-height: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 46px;
+        }
+        .hiw-flow::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 0;
+          bottom: 0;
+          width: 1px;
+          background: linear-gradient(180deg, transparent, rgba(41, 197, 246, 0.4) 15%, rgba(41, 197, 246, 0.4) 85%, transparent);
+        }
+        .hiw-community,
+        .hiw-globe-stage,
+        .hiw-compute,
+        .hiw-capability {
+          position: static;
+          transform: none;
+        }
+        .hiw-community,
+        .hiw-capability { width: min(468px, 100%); }
+        .hiw-globe-stage { width: min(460px, 82vw); }
+        .hiw-connectors { display: none; }
+        .hiw-tag-lines { display: none; }
         .footer-main { grid-template-columns: repeat(3, 1fr); }
         .social { justify-content: flex-start; }
       }
@@ -2353,7 +2756,15 @@ function renderNetworkPage() {
         .links { display: none; }
         .actions .ghost { display: none; }
         .hero .wrap { padding-top: 45px; }
-        h1 { font-size: 48px; }
+        h1 {
+          max-width: 100%;
+          font-size: clamp(29px, 8vw, 32px);
+          overflow-wrap: normal;
+        }
+        .lead {
+          max-width: 100%;
+          font-size: 16px;
+        }
         .hero-buttons { margin-bottom: 38px; }
         .mini-features,
         .metric-grid,
@@ -2362,14 +2773,14 @@ function renderNetworkPage() {
         .footer-main {
           grid-template-columns: 1fr;
         }
-        .globe-stage { min-height: 480px; }
-        .planet { width: 430px; }
+        .globe-stage { min-height: 700px; }
+        .planet { left: 50%; top: 32%; width: min(320px, 82vw); }
         .stats-card {
           position: relative;
           top: auto;
           right: auto;
           width: 100%;
-          margin-top: 370px;
+          margin-top: 470px;
         }
         .callout,
         .vertical-tag { display: none; }
@@ -2386,9 +2797,17 @@ function renderNetworkPage() {
         .community .wrap,
         .activity .wrap { padding: 52px 0; gap: 34px; }
         .map-wrap { min-height: 360px; overflow: visible; }
-        .world-map { width: 760px; height: 360px; }
+        .map-plane { width: 760px; }
         .how { padding-top: 48px; }
-        .resource-panel { width: 100%; }
+        .hiw-community,
+        .hiw-capability { width: 100%; }
+        .hiw-globe-stage { width: min(340px, 86vw); }
+        .hiw-member-grid { gap: 7px; }
+        .hiw-nav { display: none; }
+        .hiw-strip { flex-direction: column; align-items: flex-start; gap: 18px; }
+        .hiw-strip-item,
+        .hiw-strip-item:last-child { padding-right: 0; }
+        .hiw-strip-item::after { display: none; }
         .cta-card { padding: 36px 24px; }
         .cta-lines { justify-self: start; }
         .footer-bottom { flex-direction: column; }
@@ -2474,49 +2893,94 @@ function renderNetworkPage() {
             <a class="btn primary" href="#activity">Explore the global map <span aria-hidden="true">&rarr;</span></a>
           </div>
           <div class="map-wrap" role="group" aria-label="Global MundusX network map showing active community and compute locations.">
-            <img class="world-map" src="../assets/network-world-map.png" alt="" aria-hidden="true" />
-            <svg class="map-arcs" viewBox="0 0 900 480" aria-hidden="true">
-              <path d="M82 382 C168 268 302 235 428 254 C552 272 625 200 742 145" />
-              <path d="M183 216 C250 177 330 170 445 193" />
-              <path d="M483 180 C510 162 537 164 566 187" />
-              <path d="M728 307 C758 342 798 372 842 394" />
-              <circle class="arc-dot-one" cx="0" cy="0" r="3" />
-              <circle class="arc-dot-two" cx="0" cy="0" r="3" />
-            </svg>
-            ${networkLocations
-              .map(
-                (location) =>
-                  `<button class="map-point${location.selected ? " is-selected" : ""}" style="--x: ${location.x}%; --y: ${location.y}%;" type="button" aria-label="${location.city}, ${location.country}. ${location.type}. ${location.active}."><span class="point-tip"><b>${location.city}, ${location.country}</b>${location.type}<br />${location.active}</span></button>`,
-              )
-              .join("")}
-            <div class="map-label"><b>Users online</b>in New Zealand</div>
-            <div class="map-pulse"></div>
+            <div class="map-plane">
+              <img class="world-map" src="../assets/network-world-map-transparent.png" alt="" aria-hidden="true" />
+              <svg class="map-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M24 30 C 32 18 42 24 46.4 30.8 C 51 35 56 37 61.5 45.5 C 66 50 70 55 74.5 61.2 C 78 67 82 71 82.5 73.3" />
+                <path d="M20.5 38.2 C 23 33 25 35 26.5 36.7 C 34 44 37 56 37 65.1 C 50 54 62 47 74.5 61.2" />
+                <path d="M46.4 30.8 C 48.5 28.5 50.6 29.1 51.1 29.4 C 62 23 74 28 80.3 39" />
+                <path d="M74.5 61.2 C 78 67 82.5 73.3 82.5 73.3 C 85 76 87.5 78 89.3 79" />
+                <circle class="arc-dot-one" cx="0" cy="0" r="3" />
+                <circle class="arc-dot-two" cx="0" cy="0" r="3" />
+              </svg>
+              ${networkLocations
+                .map(
+                  (location) =>
+                    `<button class="map-point${location.selected ? " is-selected" : ""}" style="--x: ${location.x}%; --y: ${location.y}%;" type="button" aria-label="${location.city}, ${location.country}. ${location.type}. ${location.active}."><span class="point-tip"><b>${location.city}, ${location.country}</b>${location.type}<br />${location.active}</span></button>`,
+                )
+                .join("")}
+            </div>
           </div>
         </div>
       </section>
-      <section class="section how" aria-labelledby="how-title">
+      <section class="section how" aria-labelledby="how-title" id="how-it-works">
         <div class="wrap">
           <div class="centered-copy">
             <span class="eyebrow">How it works</span>
-            <h2 id="how-title">A more open, connected way to build.</h2>
+            <h2 id="how-title">A more <span>open, connected</span> way to build.</h2>
             <p>MundusX connects people, devices and compute resources across the world, making AI more accessible, resilient and impactful.</p>
           </div>
-          <div class="flow" aria-label="How MundusX connects devices, the network, and workloads">
-            <svg class="flow-lines" viewBox="0 0 1500 360" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M195 176C325 79 444 84 563 176C646 239 708 185 758 176" />
-              <path d="M742 176C840 178 928 178 1018 176C1120 174 1197 79 1310 104" />
-              <circle cx="340" cy="95" r="6" /><circle cx="424" cy="142" r="5" /><circle cx="515" cy="176" r="5" /><circle cx="1212" cy="101" r="5" /><circle cx="1274" cy="128" r="5" />
+          <div class="hiw-flow" id="hiwFlow" aria-label="How a local MundusX community connects into the global network and powers distributed compute">
+            <svg class="hiw-connectors" viewBox="0 0 1650 580" preserveAspectRatio="none" aria-hidden="true">
+              ${hiwConnectorMarkup(hiwConnectorsA)}
+              ${hiwConnectorMarkup(hiwConnectorsB)}
+              ${hiwConnectorMarkup(hiwConnectorsC)}
             </svg>
-            <div class="laptop-art"><div class="laptop-screen"></div><b>Your Device</b><span>Work from anywhere</span></div>
-            <div class="core">
-              ${networkCoreSvg()}
-              <div class="core-content">${logo()}<b>MundusX Network</b><span>A decentralized global<br />compute network</span></div>
+
+            <div class="hiw-community" id="hiwCommunity">
+              <button class="hiw-nav prev" type="button" aria-label="Previous community" id="hiwPrev">&lsaquo;</button>
+              <button class="hiw-nav next" type="button" aria-label="Next community" id="hiwNext">&rsaquo;</button>
+              <div class="hiw-community-head">
+                <div class="hiw-community-loc">
+                  ${siteIcon("pin")}
+                  <div>
+                    <h3 class="hiw-city" id="hiwCity">${hiwFirst.city}, ${hiwFirst.country}</h3>
+                    <p class="hiw-sub" id="hiwSub">${hiwFirst.online} community members online</p>
+                  </div>
+                </div>
+                <div class="hiw-live"><span class="dot"></span>Live</div>
+              </div>
+              <div class="hiw-member-grid" id="hiwMemberGrid">
+            ${hiwMemberSlots}
+              </div>
+              <div class="hiw-dots" id="hiwDots">${hiwDotsHtml}</div>
+              <div class="hiw-stats">
+                <div><b id="hiwOnline">${hiwFirst.online}</b><span>Online now</span></div>
+                <div><b id="hiwMembers">${hiwFormatK(hiwFirst.members)}</b><span>Total members</span></div>
+                <div><b id="hiwDevices">${hiwFirst.devices}</b><span>Compute devices</span></div>
+              </div>
             </div>
-            <div class="resource-panel">
-              <div>${siteIcon("cpu")}AI Models</div>
-              <div>${siteIcon("database")}Compute Nodes</div>
-              <div>${siteIcon("box")}Your Workloads</div>
+
+            <div class="hiw-globe-stage" id="hiwGlobeStage">
+              <div class="hiw-globe-fallback" id="hiwGlobeFallback"></div>
+              <canvas class="hiw-globe-canvas" id="hiwGlobeCanvas" aria-hidden="true"></canvas>
+              <svg class="hiw-tag-lines" id="hiwTagLines" aria-hidden="true"></svg>
+              ${hiwTagsHtml}
+              <div class="hiw-globe-core">
+                ${logo()}
+                <b>MundusX <span>Network</span></b>
+                <p>A global community<br />powering AI together</p>
+              </div>
             </div>
+
+            <div class="hiw-compute">
+              <div class="hiw-server"><span class="led"></span><span class="slots"><span></span><span></span><span></span></span></div>
+              <div class="hiw-server"><span class="led"></span><span class="slots"><span></span><span></span><span></span></span></div>
+              <div class="hiw-server"><span class="led"></span><span class="slots"><span></span><span></span><span></span></span></div>
+              <div class="hiw-compute-label">Distributed<br />Compute Nodes</div>
+            </div>
+
+            <div class="hiw-capability">
+              <div class="hiw-cap-row" id="hiwCapAi"><span class="round-icon">${siteIcon("cpu")}</span><div><b>AI Models</b><span>Run and fine-tune AI</span></div></div>
+              <div class="hiw-cap-row" id="hiwCapCompute"><span class="round-icon">${siteIcon("database")}</span><div><b>Compute Nodes</b><span>Community-powered</span></div></div>
+              <div class="hiw-cap-row" id="hiwCapWorkloads"><span class="round-icon">${siteIcon("box")}</span><div><b>Your Workloads</b><span>Build, research, create</span></div></div>
+            </div>
+          </div>
+
+          <div class="hiw-strip">
+            <div class="hiw-strip-item"><span class="round-icon">${siteIcon("users")}</span><div><b>Real people</b><span>Around the world</span></div></div>
+            <div class="hiw-strip-item"><span class="round-icon">${siteIcon("globe")}</span><div><b>Shared resources</b><span>A stronger AI ecosystem</span></div></div>
+            <div class="hiw-strip-item"><span class="round-icon">${siteIcon("spark")}</span><div><b>A brighter tomorrow</b><span>More open. More possible.</span></div></div>
           </div>
         </div>
       </section>
@@ -2585,8 +3049,790 @@ function renderNetworkPage() {
         <span class="legal"><a href="../public/docs/">Privacy</a><a href="../public/docs/">Terms</a><a href="../public/docs/">Cookies</a></span>
       </div>
     </footer>
+    <script>
+      (function () {
+        var LOCATIONS = ${JSON.stringify(hiwLocationsForClient)};
+        var DEVICE_ICONS = ${JSON.stringify(hiwIconMap)};
+        var HUES = ${JSON.stringify(hiwAvatarHues())};
+        var flow = document.getElementById("hiwFlow");
+        if (!flow) return;
+
+        var cityEl = document.getElementById("hiwCity");
+        var subEl = document.getElementById("hiwSub");
+        var grid = document.getElementById("hiwMemberGrid");
+        var members = grid ? Array.prototype.slice.call(grid.children) : [];
+        var dotsWrap = document.getElementById("hiwDots");
+        var dots = dotsWrap ? Array.prototype.slice.call(dotsWrap.children) : [];
+        var onlineEl = document.getElementById("hiwOnline");
+        var membersEl = document.getElementById("hiwMembers");
+        var devicesEl = document.getElementById("hiwDevices");
+        var tags = Array.prototype.slice.call(flow.querySelectorAll(".hiw-tag"));
+        var capRows = [document.getElementById("hiwCapAi"), document.getElementById("hiwCapCompute"), document.getElementById("hiwCapWorkloads")];
+
+        var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var index = 0;
+        var timer = null;
+        var eventTimer = null;
+        var visible = true;
+
+        function deviceIconSvg(type) {
+          var body = DEVICE_ICONS[type] || DEVICE_ICONS.laptop;
+          return '<svg viewBox="0 0 32 32" aria-hidden="true">' + body + "</svg>";
+        }
+
+        function personAvatar() {
+          return '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="4" fill="currentColor" stroke="none" opacity="0.92"/><path d="M4 20.5c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="currentColor" stroke="none" opacity="0.92"/></svg>';
+        }
+
+        function countTo(el, target) {
+          var start = parseInt((el.textContent || "0").replace(/[^0-9]/g, ""), 10) || 0;
+          if (reduced || start === target) {
+            el.textContent = String(target);
+            return;
+          }
+          var t0 = performance.now();
+          var dur = 650;
+          function step(now) {
+            var p = Math.min(1, (now - t0) / dur);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = String(Math.round(start + (target - start) * eased));
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        function applyLocation(loc, animate) {
+          if (cityEl) cityEl.textContent = loc.city + ", " + loc.country;
+          if (subEl) subEl.textContent = loc.online + " community members online";
+          if (onlineEl) countTo(onlineEl, loc.online);
+          if (membersEl) membersEl.textContent = loc.members;
+          if (devicesEl) devicesEl.textContent = String(loc.devices);
+          dots.forEach(function (d, i) {
+            d.classList.toggle("is-active", i === index);
+          });
+          tags.forEach(function (tag) {
+            var isMatch = tag.getAttribute("data-city") === loc.city;
+            tag.classList.toggle("is-active", isMatch);
+          });
+          members.forEach(function (card, i) {
+            var type = loc.devicesOrder[i % loc.devicesOrder.length];
+            var hue = HUES[i % HUES.length];
+            var avatar = card.querySelector(".hiw-avatar");
+            var device = card.querySelector(".hiw-device");
+            if (avatar) {
+              avatar.style.setProperty("--hue", hue);
+              avatar.innerHTML = personAvatar();
+            }
+            if (device) device.innerHTML = deviceIconSvg(type);
+            if (animate && !reduced) {
+              card.style.transitionDelay = i * 60 + "ms";
+              requestAnimationFrame(function () {
+                card.classList.remove("is-hidden");
+              });
+            }
+          });
+        }
+
+        function goTo(nextIndex) {
+          index = ((nextIndex % LOCATIONS.length) + LOCATIONS.length) % LOCATIONS.length;
+          var loc = LOCATIONS[index];
+          if (reduced) {
+            applyLocation(loc, false);
+            return;
+          }
+          members.forEach(function (card) {
+            card.style.transitionDelay = "0ms";
+            card.classList.add("is-hidden");
+          });
+          setTimeout(function () {
+            applyLocation(loc, true);
+          }, 400);
+        }
+
+        function scheduleAuto() {
+          if (timer) clearInterval(timer);
+          if (reduced || !visible) return;
+          timer = setInterval(function () {
+            goTo(index + 1);
+          }, 10000);
+        }
+
+        function scheduleEvent() {
+          if (eventTimer) clearTimeout(eventTimer);
+          if (reduced || !visible) return;
+          var delay = 7000 + Math.random() * 6000;
+          eventTimer = setTimeout(function () {
+            runEvent();
+            scheduleEvent();
+          }, delay);
+        }
+
+        function runEvent() {
+          var row = capRows[Math.floor(Math.random() * capRows.length)];
+          if (!row) return;
+          row.classList.add("is-pulsing");
+          setTimeout(function () {
+            row.classList.remove("is-pulsing");
+          }, 850);
+        }
+
+        var prevBtn = document.getElementById("hiwPrev");
+        var nextBtn = document.getElementById("hiwNext");
+        if (prevBtn) prevBtn.addEventListener("click", function () { goTo(index - 1); scheduleAuto(); });
+        if (nextBtn) nextBtn.addEventListener("click", function () { goTo(index + 1); scheduleAuto(); });
+        dots.forEach(function (dot, i) {
+          dot.addEventListener("click", function () { goTo(i); scheduleAuto(); });
+        });
+
+        if ("IntersectionObserver" in window) {
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                visible = entry.isIntersecting;
+                if (visible) {
+                  scheduleAuto();
+                  scheduleEvent();
+                } else {
+                  if (timer) clearInterval(timer);
+                  if (eventTimer) clearTimeout(eventTimer);
+                }
+              });
+            },
+            { threshold: 0.15 },
+          );
+          observer.observe(flow);
+        } else {
+          scheduleAuto();
+          scheduleEvent();
+        }
+      })();
+    </script>
+    <script type="module">
+      (function () {
+        var stage = document.getElementById("hiwGlobeStage");
+        var canvas = document.getElementById("hiwGlobeCanvas");
+        var fallback = document.getElementById("hiwGlobeFallback");
+        if (!stage || !canvas) return;
+        var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var LABELED = ${JSON.stringify(hiwTags)};
+        var AMBIENT = ${JSON.stringify(hiwAmbientNodes)};
+        var ROUTES = ${JSON.stringify(hiwRoutes)};
+        var tagElements = Array.prototype.slice.call(document.querySelectorAll(".hiw-tag"));
+
+        function showFallback() {
+          if (fallback) fallback.classList.add("is-visible");
+        }
+
+        import("https://unpkg.com/three@0.160.0/build/three.module.js")
+          .then(function (THREE) {
+            try {
+              initGlobe(THREE);
+            } catch (err) {
+              showFallback();
+            }
+          })
+          .catch(function () {
+            showFallback();
+          });
+
+        function initGlobe(THREE) {
+          var density = window.innerWidth < 760 ? 0.4 : window.innerWidth < 1180 ? 0.7 : 1;
+
+          var CONTINENTS = [
+            { base: 1300, poly: [[-165,68],[-140,70],[-100,72],[-80,62],[-95,50],[-80,45],[-75,35],[-80,25],[-97,18],[-105,20],[-115,30],[-124,40],[-124,48],[-130,55],[-165,68]] },
+            { base: 820, poly: [[-80,10],[-77,0],[-70,-5],[-70,-18],[-63,-30],[-58,-35],[-65,-45],[-70,-55],[-68,-52],[-62,-40],[-48,-25],[-35,-8],[-50,2],[-60,8],[-80,10]] },
+            { base: 560, poly: [[-10,36],[-9,44],[2,51],[10,54],[20,55],[30,60],[40,65],[35,55],[28,45],[20,40],[15,38],[5,38],[-5,36],[-10,36]] },
+            { base: 980, poly: [[-17,15],[-10,5],[10,4],[15,-5],[20,-15],[25,-25],[30,-30],[35,-25],[38,-10],[45,0],[42,10],[38,15],[30,22],[15,30],[0,32],[-10,25],[-17,15]] },
+            { base: 1300, poly: [[30,45],[40,40],[50,30],[60,25],[70,20],[80,15],[95,5],[105,0],[110,10],[120,20],[125,30],[135,35],[140,42],[135,50],[120,55],[100,60],[80,60],[60,55],[45,50],[30,45]] },
+            { base: 330, poly: [[113,-22],[120,-18],[135,-12],[145,-16],[153,-28],[150,-38],[140,-38],[130,-32],[115,-33],[113,-22]] },
+          ];
+
+          function pointInPolygon(lon, lat, poly) {
+            var inside = false;
+            for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+              var xi = poly[i][0], yi = poly[i][1];
+              var xj = poly[j][0], yj = poly[j][1];
+              var intersect = yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+              if (intersect) inside = !inside;
+            }
+            return inside;
+          }
+
+          function polyBBox(poly) {
+            var minLon = Infinity, maxLon = -Infinity, minLat = Infinity, maxLat = -Infinity;
+            poly.forEach(function (p) {
+              if (p[0] < minLon) minLon = p[0];
+              if (p[0] > maxLon) maxLon = p[0];
+              if (p[1] < minLat) minLat = p[1];
+              if (p[1] > maxLat) maxLat = p[1];
+            });
+            return [minLon, maxLon, minLat, maxLat];
+          }
+
+          function llToVec3(lat, lon, r) {
+            var phi = ((90 - lat) * Math.PI) / 180;
+            var theta = ((lon + 180) * Math.PI) / 180;
+            var x = -r * Math.sin(phi) * Math.cos(theta);
+            var z = r * Math.sin(phi) * Math.sin(theta);
+            var y = r * Math.cos(phi);
+            return [x, y, z];
+          }
+
+          var PALETTE = [
+            [40 / 255, 199 / 255, 246 / 255, 0.2],
+            [57 / 255, 213 / 255, 255 / 255, 0.35],
+            [120 / 255, 231 / 255, 255 / 255, 0.45],
+          ];
+          function pickColor() {
+            var r = Math.random();
+            if (r < 0.55) return PALETTE[0];
+            if (r < 0.88) return PALETTE[1];
+            return PALETTE[2];
+          }
+
+          function buildContinentData() {
+            var positions = [];
+            var colors = [];
+            var sizes = [];
+            var opac = [];
+            var flick = [];
+            var phase = [];
+            var mesh = [];
+            CONTINENTS.forEach(function (c) {
+              var target = Math.max(30, Math.round(c.base * density));
+              var bbox = polyBBox(c.poly);
+              var pts = [];
+              var attempts = 0;
+              while (pts.length < target && attempts < target * 40) {
+                attempts++;
+                var lon = bbox[0] + Math.random() * (bbox[1] - bbox[0]);
+                var lat = bbox[2] + Math.random() * (bbox[3] - bbox[2]);
+                if (pointInPolygon(lon, lat, c.poly)) pts.push([lon, lat]);
+              }
+              pts.forEach(function (p, idx) {
+                var v = llToVec3(p[1], p[0], 1);
+                positions.push(v[0], v[1], v[2]);
+                var col = pickColor();
+                colors.push(col[0], col[1], col[2]);
+                sizes.push(0.9 + Math.random() * 1.3);
+                opac.push(col[3] * (1.2 + Math.random() * 0.5));
+                flick.push(0.0);
+                phase.push(Math.random() * Math.PI * 2);
+                if (idx % 3 === 0 && idx + 2 < pts.length) {
+                  var q = pts[idx + 2];
+                  var dLon = q[0] - p[0], dLat = q[1] - p[1];
+                  if (Math.sqrt(dLon * dLon + dLat * dLat) < 4.5) {
+                    var v2 = llToVec3(q[1], q[0], 1);
+                    mesh.push(v[0], v[1], v[2], v2[0], v2[1], v2[2]);
+                  }
+                }
+              });
+            });
+            return { positions: positions, colors: colors, sizes: sizes, opac: opac, flick: flick, phase: phase, mesh: mesh };
+          }
+
+          function makeRadialTexture(inner, outer, size) {
+            var c = document.createElement("canvas");
+            c.width = c.height = size;
+            var ctx = c.getContext("2d");
+            var g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+            g.addColorStop(0, inner);
+            g.addColorStop(1, outer);
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, size, size);
+            var tex = new THREE.CanvasTexture(c);
+            tex.needsUpdate = true;
+            return tex;
+          }
+          var scene = new THREE.Scene();
+          var camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+          camera.position.set(0, 0, 4.55);
+
+          var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+          renderer.setClearColor(0x000000, 0);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+          var earthGroup = new THREE.Group();
+          earthGroup.rotation.y = -0.6;
+          var outerGroup = new THREE.Group();
+          outerGroup.rotation.x = 0.2;
+          outerGroup.rotation.z = -0.1;
+          scene.add(earthGroup, outerGroup);
+
+          function resize() {
+            var w = stage.clientWidth, h = stage.clientHeight;
+            if (!w || !h) return;
+            renderer.setSize(w, h, false);
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+          }
+          resize();
+          window.addEventListener("resize", resize);
+
+          var earthMat = new THREE.ShaderMaterial({
+            uniforms: {
+              uColorA: { value: new THREE.Color(0x02101b) },
+              uColorB: { value: new THREE.Color(0x0a3550) },
+            },
+            vertexShader: [
+              "varying vec3 vNormal;",
+              "void main() {",
+              "  vNormal = normalize(normalMatrix * normal);",
+              "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+              "}",
+            ].join("\\n"),
+            fragmentShader: [
+              "uniform vec3 uColorA;",
+              "uniform vec3 uColorB;",
+              "varying vec3 vNormal;",
+              "void main() {",
+              "  vec3 lightDir = normalize(vec3(-0.6, 0.5, 0.65));",
+              "  float lit = max(dot(vNormal, lightDir), 0.0);",
+              "  float fres = pow(1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0), 2.2);",
+              "  vec3 col = mix(uColorA, uColorB, lit * 0.5 + fres * 0.25);",
+              "  gl_FragColor = vec4(col, 1.0);",
+              "}",
+            ].join("\\n"),
+          });
+          var earthMesh = new THREE.Mesh(new THREE.SphereGeometry(0.985, 48, 48), earthMat);
+          earthGroup.add(earthMesh);
+
+          var atmoShader = {
+            vertexShader: [
+              "varying vec3 vNormal;",
+              "varying vec3 vViewDir;",
+              "void main() {",
+              "  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+              "  vNormal = normalize(normalMatrix * normal);",
+              "  vViewDir = normalize(-mvPosition.xyz);",
+              "  gl_Position = projectionMatrix * mvPosition;",
+              "}",
+            ].join("\\n"),
+            fragmentShader: [
+              "uniform float uIntensity;",
+              "varying vec3 vNormal;",
+              "varying vec3 vViewDir;",
+              "void main() {",
+              "  float rim = pow(1.0 - max(dot(normalize(vNormal), normalize(vViewDir)), 0.0), 4.2);",
+              "  vec3 col = mix(vec3(0.11, 0.75, 0.94), vec3(0.48, 0.91, 1.0), rim);",
+              "  gl_FragColor = vec4(col, rim * uIntensity);",
+              "}",
+            ].join("\\n"),
+          };
+          var atmoMat = new THREE.ShaderMaterial({
+            uniforms: { uIntensity: { value: 0.8 } },
+            vertexShader: atmoShader.vertexShader,
+            fragmentShader: atmoShader.fragmentShader,
+            transparent: true,
+            depthWrite: false,
+            side: THREE.FrontSide,
+            blending: THREE.AdditiveBlending,
+          });
+          var atmoOuterMat = new THREE.ShaderMaterial({
+            uniforms: { uIntensity: { value: 0.16 } },
+            vertexShader: atmoShader.vertexShader,
+            fragmentShader: atmoShader.fragmentShader,
+            transparent: true,
+            depthWrite: false,
+            side: THREE.FrontSide,
+            blending: THREE.AdditiveBlending,
+          });
+          earthGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.02, 48, 48), atmoMat));
+          earthGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.045, 32, 32), atmoOuterMat));
+
+          var pointsData = buildContinentData();
+          var pointsGeo = new THREE.BufferGeometry();
+          pointsGeo.setAttribute("position", new THREE.Float32BufferAttribute(pointsData.positions, 3));
+          pointsGeo.setAttribute("aColor", new THREE.Float32BufferAttribute(pointsData.colors, 3));
+          pointsGeo.setAttribute("aSize", new THREE.Float32BufferAttribute(pointsData.sizes, 1));
+          pointsGeo.setAttribute("aOpacity", new THREE.Float32BufferAttribute(pointsData.opac, 1));
+          pointsGeo.setAttribute("aFlicker", new THREE.Float32BufferAttribute(pointsData.flick, 1));
+          pointsGeo.setAttribute("aPhase", new THREE.Float32BufferAttribute(pointsData.phase, 1));
+          var pointsMaterial = new THREE.ShaderMaterial({
+            uniforms: { uTime: { value: 0 } },
+            transparent: true,
+            depthWrite: false,
+            depthTest: true,
+            blending: THREE.AdditiveBlending,
+            vertexShader: [
+              "attribute vec3 aColor;",
+              "attribute float aSize;",
+              "attribute float aOpacity;",
+              "attribute float aFlicker;",
+              "attribute float aPhase;",
+              "uniform float uTime;",
+              "varying float vOpacity;",
+              "varying vec3 vColor;",
+              "void main() {",
+              "  vColor = aColor;",
+              "  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+              "  vOpacity = aOpacity;",
+              "  gl_PointSize = aSize * (5.5 / -mvPosition.z);",
+              "  gl_Position = projectionMatrix * mvPosition;",
+              "}",
+            ].join("\\n"),
+            fragmentShader: [
+              "precision mediump float;",
+              "varying float vOpacity;",
+              "varying vec3 vColor;",
+              "void main() {",
+              "  vec2 uv = gl_PointCoord - vec2(0.5);",
+              "  float d = length(uv);",
+              "  if (d > 0.5) discard;",
+              "  float alpha = smoothstep(0.5, 0.0, d) * vOpacity;",
+              "  gl_FragColor = vec4(vColor, alpha);",
+              "}",
+            ].join("\\n"),
+          });
+          earthGroup.add(new THREE.Points(pointsGeo, pointsMaterial));
+
+          var meshGeo = new THREE.BufferGeometry();
+          meshGeo.setAttribute("position", new THREE.Float32BufferAttribute(pointsData.mesh, 3));
+          var meshMat = new THREE.LineBasicMaterial({ color: 0x1caee2, transparent: true, opacity: 0.14, depthWrite: false });
+          earthGroup.add(new THREE.LineSegments(meshGeo, meshMat));
+
+          var haloTex = makeRadialTexture("rgba(56,214,255,0.9)", "rgba(56,214,255,0)", 128);
+          var coreTex = makeRadialTexture("rgba(255,255,255,1)", "rgba(231,252,255,0)", 64);
+
+          function createNode(n) {
+            var p = llToVec3(n.lat, n.lon, 1.002);
+            var group = new THREE.Group();
+            group.position.set(p[0], p[1], p[2]);
+            var halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.36 }));
+            halo.scale.set(0.16, 0.16, 1);
+            var core = new THREE.Sprite(new THREE.SpriteMaterial({ map: coreTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.88 }));
+            core.scale.set(0.045, 0.045, 1);
+            group.add(halo, core);
+            earthGroup.add(group);
+            return { city: n.city, group: group, halo: halo, core: core, phase: Math.random() * Math.PI * 2 };
+          }
+
+          var nodeByName = {};
+          LABELED.concat(AMBIENT).forEach(function (n) {
+            nodeByName[n.city] = createNode(n);
+          });
+
+          function greatArcCurve(a, b) {
+            var pa = llToVec3(a.lat, a.lon, 1);
+            var pb = llToVec3(b.lat, b.lon, 1);
+            var va = new THREE.Vector3(pa[0], pa[1], pa[2]);
+            var vb = new THREE.Vector3(pb[0], pb[1], pb[2]);
+            var angle = va.angleTo(vb);
+            var mid = va.clone().add(vb).normalize();
+            mid.multiplyScalar(1 + 0.08 + angle * 0.1);
+            return new THREE.CatmullRomCurve3([va, mid, vb]);
+          }
+
+          var arcObjects = [];
+          var LABELED_BY_NAME = {};
+          LABELED.concat(AMBIENT).forEach(function (n) { LABELED_BY_NAME[n.city] = n; });
+          ROUTES.forEach(function (pair) {
+            var a = LABELED_BY_NAME[pair[0]];
+            var b = LABELED_BY_NAME[pair[1]];
+            if (!a || !b) return;
+            var curve = greatArcCurve(a, b);
+            var geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(48));
+            var mat = new THREE.LineBasicMaterial({ color: 0x28c9f5, transparent: true, opacity: 0.16, depthWrite: false });
+            var line = new THREE.Line(geo, mat);
+            earthGroup.add(line);
+            arcObjects.push({ a: nodeByName[pair[0]], b: nodeByName[pair[1]], curve: curve, line: line });
+          });
+
+          var PACKET_COUNT = 6;
+          var packets = [];
+          for (var i = 0; i < PACKET_COUNT; i++) {
+            var pMat = new THREE.SpriteMaterial({ map: coreTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 });
+            var pSprite = new THREE.Sprite(pMat);
+            pSprite.scale.set(0.035, 0.035, 1);
+            earthGroup.add(pSprite);
+            packets.push({ sprite: pSprite, arc: null, t: 0, speed: 0, delay: 0, active: false });
+          }
+          function resetPacket(p, elapsed) {
+            if (!arcObjects.length) return;
+            p.arc = arcObjects[Math.floor(Math.random() * arcObjects.length)];
+            p.t = 0;
+            p.speed = 1 / (3000 + Math.random() * 4000);
+            p.delay = elapsed + Math.random() * 2500;
+            p.active = false;
+          }
+          packets.forEach(function (p) { resetPacket(p, 0); });
+
+          function updatePackets(elapsed, dtMs) {
+            packets.forEach(function (p) {
+              if (!p.arc) return;
+              if (!p.active) {
+                if (elapsed >= p.delay) p.active = true;
+                else { p.sprite.material.opacity = 0; return; }
+              }
+              p.t += p.speed * dtMs;
+              if (p.t >= 1) { resetPacket(p, elapsed); p.sprite.material.opacity = 0; return; }
+              var pos = p.arc.curve.getPointAt(Math.min(p.t, 1));
+              p.sprite.position.copy(pos);
+              var fade = Math.sin(Math.PI * Math.min(p.t, 1));
+              p.sprite.material.opacity = 0.9 * fade;
+            });
+          }
+
+          function makeOrbitalLine(radius, tiltX, tiltZ, dashed) {
+            var curve = new THREE.EllipseCurve(0, 0, radius, radius * 0.4, 0, Math.PI * 2, false, 0);
+            var pts3 = curve.getPoints(96).map(function (p) { return new THREE.Vector3(p.x, 0, p.y); });
+            var geo = new THREE.BufferGeometry().setFromPoints(pts3);
+            var mat = dashed
+              ? new THREE.LineDashedMaterial({ color: 0x1cc2f1, transparent: true, opacity: 0.22, dashSize: 0.05, gapSize: 0.04 })
+              : new THREE.LineBasicMaterial({ color: 0x1cc2f1, transparent: true, opacity: 0.16 });
+            var line = new THREE.LineLoop(geo, mat);
+            if (dashed) line.computeLineDistances();
+            line.rotation.x = tiltX;
+            line.rotation.z = tiltZ;
+            return line;
+          }
+          outerGroup.add(makeOrbitalLine(1.28, 0.35, 0.15, false));
+          outerGroup.add(makeOrbitalLine(1.22, -0.5, 0.6, true));
+          outerGroup.add(makeOrbitalLine(1.34, 0.15, -0.4, false));
+
+          var extCount = Math.round(48 * density);
+          var extPositions = [];
+          for (var j = 0; j < extCount; j++) {
+            var theta = Math.random() * Math.PI * 2;
+            var phi = Math.acos(2 * Math.random() - 1);
+            var r = 1.12 + Math.random() * 0.22;
+            extPositions.push(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+          }
+          var extGeo = new THREE.BufferGeometry();
+          extGeo.setAttribute("position", new THREE.Float32BufferAttribute(extPositions, 3));
+          var extMat = new THREE.PointsMaterial({ color: 0x8fe6ff, size: 0.012, transparent: true, opacity: 0.26, depthWrite: false, sizeAttenuation: true });
+          outerGroup.add(new THREE.Points(extGeo, extMat));
+
+          var SVG_NS = "http://www.w3.org/2000/svg";
+          var linesSvg = document.getElementById("hiwTagLines");
+          var tagLines = tagElements.map(function (el, idx) {
+            if (!linesSvg) return null;
+            var path = document.createElementNS(SVG_NS, "path");
+            path.setAttribute("class", "hiw-tag-line");
+            var dotA = document.createElementNS(SVG_NS, "circle");
+            dotA.setAttribute("class", "hiw-tag-line-dot");
+            dotA.setAttribute("r", "2.4");
+            var dotB = document.createElementNS(SVG_NS, "circle");
+            dotB.setAttribute("class", "hiw-tag-line-dot");
+            dotB.setAttribute("r", "2.4");
+            linesSvg.appendChild(path);
+            linesSvg.appendChild(dotA);
+            linesSvg.appendChild(dotB);
+            return { path: path, dots: [dotA, dotB], phase: idx * 0.37 };
+          });
+
+          var tmpVec = new THREE.Vector3();
+          function updateTagProjections(elapsed) {
+            var rect = stage.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            if (linesSvg) linesSvg.setAttribute("viewBox", "0 0 " + rect.width + " " + rect.height);
+            var cx = rect.width / 2, cy = rect.height / 2;
+            tagElements.forEach(function (el, idx) {
+              var node = nodeByName[el.getAttribute("data-city")];
+              var line = tagLines[idx];
+              if (!node) return;
+              var worldPos = node.group.getWorldPosition(tmpVec.clone());
+              var normal = worldPos.clone().normalize();
+              var toCamera = camera.position.clone().sub(worldPos).normalize();
+              var facing = normal.dot(toCamera);
+              var ndc = worldPos.clone().project(camera);
+              var x = (ndc.x * 0.5 + 0.5) * rect.width;
+              var y = (1 - (ndc.y * 0.5 + 0.5)) * rect.height;
+              var ux = (x - cx) / (rect.width * 0.5 || 1);
+              var uy = (y - cy) / (rect.height * 0.5 || 1);
+              var uLen = Math.sqrt(ux * ux + uy * uy) || 1;
+              ux /= uLen;
+              uy /= uLen;
+              var pushOut = rect.width * 0.27;
+              var lx = x + ux * pushOut;
+              var ly = y + uy * pushOut;
+              el.style.transform = "translate(" + lx.toFixed(1) + "px," + ly.toFixed(1) + "px)";
+              el.style.opacity = facing > 0.08 ? "1" : "0";
+              el.classList.toggle("is-left", ux < -0.15);
+              el.classList.toggle("is-bottom", uy > 0.25);
+
+              if (!line) return;
+              var alpha = Math.max(0, Math.min(1, facing / 0.28));
+              if (alpha <= 0.01) {
+                line.path.setAttribute("opacity", "0");
+                line.dots[0].setAttribute("opacity", "0");
+                line.dots[1].setAttribute("opacity", "0");
+                return;
+              }
+              var cardEl = el.querySelector(".hiw-tag-card");
+              var cardRect = cardEl ? cardEl.getBoundingClientRect() : null;
+              var nearLeft = cardRect ? x <= cardRect.left + cardRect.width / 2 - rect.left : true;
+              var endX = cardRect ? (nearLeft ? cardRect.left : cardRect.right) - rect.left : x;
+              var endY = cardRect ? cardRect.top - rect.top + cardRect.height / 2 : y;
+              var dx = endX - x, dy = endY - y;
+              var len = Math.sqrt(dx * dx + dy * dy) || 1;
+              var nx = -dy / len, ny = dx / len;
+              var midX = (x + endX) / 2, midY = (y + endY) / 2;
+              var sign = nx * (midX - cx) + ny * (midY - cy) < 0 ? -1 : 1;
+              var bend = Math.min(Math.max(len * 0.16, 10), 34) * sign;
+              var ctrlX = midX + nx * bend, ctrlY = midY + ny * bend;
+              line.path.setAttribute("d", "M" + x.toFixed(1) + " " + y.toFixed(1) + " Q " + ctrlX.toFixed(1) + " " + ctrlY.toFixed(1) + " " + endX.toFixed(1) + " " + endY.toFixed(1));
+              line.path.setAttribute("opacity", (alpha * 0.6).toFixed(2));
+              line.dots.forEach(function (dot, dIdx) {
+                var t = ((elapsed || 0) * 0.00028 + line.phase + dIdx * 0.5) % 1;
+                var mt = 1 - t;
+                var px = mt * mt * x + 2 * mt * t * ctrlX + t * t * endX;
+                var py = mt * mt * y + 2 * mt * t * ctrlY + t * t * endY;
+                dot.setAttribute("cx", px.toFixed(1));
+                dot.setAttribute("cy", py.toFixed(1));
+                var fade = Math.sin(Math.PI * t);
+                dot.setAttribute("opacity", Math.max(0, fade * alpha).toFixed(2));
+              });
+            });
+          }
+
+          function pulseNodes(elapsed) {
+            Object.keys(nodeByName).forEach(function (key) {
+              var n = nodeByName[key];
+              var s = 0.16 * (1 + 0.12 * Math.sin(elapsed * 0.0012 + n.phase));
+              n.halo.scale.set(s, s, 1);
+            });
+          }
+
+          var EARTH_PERIOD = 92;
+          var OUTER_PERIOD = 205;
+          var clock = new THREE.Clock();
+          var running = false;
+
+          function renderFrame(elapsed, dt) {
+            if (!reduced) {
+              earthGroup.rotation.y += ((Math.PI * 2) / EARTH_PERIOD) * dt;
+              outerGroup.rotation.y -= ((Math.PI * 2) / OUTER_PERIOD) * dt;
+              updatePackets(elapsed, dt * 1000);
+              pulseNodes(elapsed);
+              var breathe = 0.5 + 0.5 * Math.sin(elapsed * 0.00035);
+              atmoMat.uniforms.uIntensity.value = 0.72 + breathe * 0.16;
+              atmoOuterMat.uniforms.uIntensity.value = 0.12 + breathe * 0.08;
+            }
+            scene.updateMatrixWorld(true);
+            updateTagProjections(elapsed);
+            renderer.render(scene, camera);
+          }
+
+          function animate() {
+            if (!running) return;
+            requestAnimationFrame(animate);
+            var dt = Math.min(clock.getDelta(), 0.1);
+            renderFrame(clock.elapsedTime * 1000, dt);
+          }
+
+          if (reduced) {
+            renderFrame(0, 0);
+          } else if ("IntersectionObserver" in window) {
+            var io = new IntersectionObserver(
+              function (entries) {
+                entries.forEach(function (entry) {
+                  if (entry.isIntersecting && !running) {
+                    running = true;
+                    clock.start();
+                    requestAnimationFrame(animate);
+                  } else if (!entry.isIntersecting) {
+                    running = false;
+                  }
+                });
+              },
+              { threshold: 0.1 },
+            );
+            io.observe(stage);
+          } else {
+            running = true;
+            requestAnimationFrame(animate);
+          }
+        }
+      })();
+    </script>
   </body>
 </html>`;
+}
+
+function hiwAvatarHues() {
+  return [198, 168, 212, 322, 262, 36];
+}
+
+function hiwDeviceIconMap() {
+  return {
+    laptop: '<rect x="6" y="7" width="20" height="13" rx="1.6"/><rect x="10" y="10.2" width="12" height="6.6" fill="currentColor" opacity="0.32" stroke="none"/><path d="M3 23h26l-2.4 3.2H5.4Z"/>',
+    desktop: '<rect x="5" y="6" width="22" height="14" rx="1.6"/><rect x="9" y="9.2" width="14" height="7.6" fill="currentColor" opacity="0.32" stroke="none"/><path d="M13 20.4v3.6M19 20.4v3.6M10 24.4h12"/>',
+    tower: '<rect x="10.5" y="4" width="11" height="24" rx="1.6"/><path d="M13.2 9h5.6M13.2 13.4h5.6"/><circle cx="16" cy="22.4" r="1.5" fill="currentColor" stroke="none"/>',
+    minipc: '<rect x="8" y="11.5" width="16" height="9.4" rx="1.6"/><circle cx="12.4" cy="16.2" r="1.2" fill="currentColor" stroke="none"/><path d="M16 20.9v3M12 25h8"/>',
+    server: '<rect x="6" y="8.4" width="20" height="5.6" rx="1"/><rect x="6" y="17.6" width="20" height="5.6" rx="1"/><circle cx="10" cy="11.2" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="20.4" r="1" fill="currentColor" stroke="none"/>',
+    highend: '<rect x="7.5" y="5" width="17" height="22" rx="1.6"/><path d="M11.2 10h9.6M11.2 14h9.6M11.2 18h5.8"/><circle cx="20" cy="22" r="1.3" fill="currentColor" stroke="none"/>',
+  };
+}
+
+function hiwDeviceIconSvg(type, map) {
+  return `<svg viewBox="0 0 32 32" aria-hidden="true">${map[type] ?? map.laptop}</svg>`;
+}
+
+function hiwPersonAvatar() {
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="4" fill="currentColor" stroke="none" opacity="0.92"/><path d="M4 20.5c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="currentColor" stroke="none" opacity="0.92"/></svg>';
+}
+
+function hiwFormatK(n) {
+  if (n >= 1000) {
+    return (Math.round(n / 100) / 10).toFixed(1).replace(/\.0$/, "") + "K";
+  }
+  return String(n);
+}
+
+function hiwLocations() {
+  return [
+    { city: "San Francisco", country: "USA", online: 248, members: 1200, devices: 320, devicesOrder: ["laptop", "desktop", "server", "tower", "minipc", "highend"] },
+    { city: "Auckland", country: "New Zealand", online: 186, members: 840, devices: 214, devicesOrder: ["desktop", "laptop", "minipc", "server", "highend", "tower"] },
+    { city: "Manila", country: "Philippines", online: 312, members: 1460, devices: 398, devicesOrder: ["laptop", "highend", "desktop", "minipc", "server", "tower"] },
+    { city: "Singapore", country: "Singapore", online: 204, members: 980, devices: 276, devicesOrder: ["highend", "server", "desktop", "laptop", "tower", "minipc"] },
+    { city: "Tokyo", country: "Japan", online: 358, members: 1620, devices: 441, devicesOrder: ["tower", "highend", "laptop", "server", "desktop", "minipc"] },
+    { city: "Sydney", country: "Australia", online: 227, members: 1050, devices: 289, devicesOrder: ["desktop", "minipc", "laptop", "highend", "tower", "server"] },
+    { city: "Berlin", country: "Germany", online: 265, members: 1180, devices: 312, devicesOrder: ["server", "tower", "highend", "desktop", "laptop", "minipc"] },
+    { city: "London", country: "United Kingdom", online: 341, members: 1540, devices: 407, devicesOrder: ["laptop", "highend", "server", "minipc", "desktop", "tower"] },
+    { city: "Toronto", country: "Canada", online: 198, members: 910, devices: 251, devicesOrder: ["minipc", "laptop", "tower", "desktop", "server", "highend"] },
+    { city: "São Paulo", country: "Brazil", online: 176, members: 790, devices: 208, devicesOrder: ["desktop", "server", "laptop", "tower", "minipc", "highend"] },
+  ];
+}
+
+function hiwGlobeTags() {
+  return [
+    { city: "London", country: "UK", lat: 51.5, lon: -0.12 },
+    { city: "Tokyo", country: "Japan", lat: 35.68, lon: 139.69 },
+    { city: "San Francisco", country: "USA", lat: 37.77, lon: -122.42 },
+    { city: "São Paulo", country: "Brazil", lat: -23.55, lon: -46.63 },
+    { city: "Sydney", country: "Australia", lat: -33.87, lon: 151.21 },
+  ];
+}
+
+function hiwGlobeAmbientNodes() {
+  return [
+    { city: "Singapore", lat: 1.35, lon: 103.82 },
+    { city: "Auckland", lat: -36.85, lon: 174.76 },
+  ];
+}
+
+function hiwGlobeRoutes() {
+  return [
+    ["San Francisco", "London"],
+    ["London", "Singapore"],
+    ["Singapore", "Sydney"],
+    ["Sydney", "Auckland"],
+    ["Tokyo", "San Francisco"],
+    ["São Paulo", "London"],
+    ["Tokyo", "Singapore"],
+    ["Auckland", "Singapore"],
+  ];
+}
+
+function hiwMemberCardHTML(deviceType, hue, iconMap) {
+  return `<div class="hiw-member">
+              <div class="hiw-member-top">
+                <span class="hiw-avatar" style="--hue:${hue}">${hiwPersonAvatar()}</span>
+                <span class="hiw-device">${hiwDeviceIconSvg(deviceType, iconMap)}</span>
+              </div>
+              <div class="hiw-member-status"><span class="dot"></span>Sharing compute</div>
+            </div>`;
 }
 
 function networkCoreSvg() {
@@ -2626,6 +3872,7 @@ function siteIcon(name) {
     moon: '<path d="M20.5 14.5A8 8 0 0 1 9.5 3.5 8 8 0 1 0 20.5 14.5Z"/>',
     network: '<circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M10.6 7.7 6.4 16.3"/><path d="m13.4 7.7 4.2 8.6"/><path d="M8 19h8"/>',
     paperclip: '<path d="m21.4 11.6-8.5 8.5a6 6 0 0 1-8.5-8.5l8.5-8.5a4 4 0 0 1 5.7 5.7l-8.5 8.5a2 2 0 0 1-2.8-2.8l8.5-8.5"/>',
+    pin: '<path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/>',
     search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
     share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2"/><path d="m8.6 13.4 6.8 4.2"/>',
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-5"/>',
