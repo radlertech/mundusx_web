@@ -18,7 +18,7 @@ require_file() {
 require_line() {
   local path="$1"
   local pattern="$2"
-  if ! grep -Fq "$pattern" "$out_dir/$path"; then
+  if ! grep -Fq -- "$pattern" "$out_dir/$path"; then
     echo "missing pattern '$pattern' in generated $path" >&2
     exit 1
   fi
@@ -30,6 +30,7 @@ require_file "assets/mundusx-logo-official.svg"
 require_file "assets/network-hero-globe.png"
 require_file "assets/network-world-map-transparent.png"
 require_file "assets/network-cta-mountains.png"
+require_file "atlas/index.html"
 require_file "network/index.html"
 require_file "install/index.html"
 require_file "device-identity/index.html"
@@ -42,13 +43,23 @@ require_file "public/install.ps1"
 require_file "public/release/index.html"
 require_file "public/release.json"
 
-require_line "index.html" "AI that works across"
+require_line "index.html" "Your AI."
 require_line "index.html" "Chat with Atlas"
-require_line "index.html" "Decentralized Compute"
+require_line "index.html" "Powered by people."
+require_line "index.html" "Your device can be"
 require_line "index.html" "./assets/homepage-dark-bg.png"
 require_line "index.html" "./assets/mundusx-logo-official.svg"
+require_line "index.html" '--wrap: min(1680px, calc(100% - 88px))'
+require_line "index.html" '--wrap: min(100% - 36px, 768px)'
+require_line "index.html" '--wrap: min(100% - 26px, 375px)'
 require_line "index.html" 'href="./network/">Network</a>'
-require_line "index.html" 'href="https://chat.mundusx.ai/">Start with MundusX</a>'
+require_line "index.html" 'href="https://chat.mundusx.ai/">Chat with Atlas'
+require_line "atlas/index.html" '--wrap: min(1680px, calc(100% - 88px))'
+require_line "atlas/index.html" '--wrap: min(100% - 36px, 768px)'
+require_line "atlas/index.html" '--wrap: min(100% - 26px, 375px)'
+require_line "atlas/index.html" 'font-weight: 600;'
+require_line "atlas/index.html" 'border-bottom: 0;'
+require_line "atlas/index.html" 'background: linear-gradient(135deg, #38daff, #22c9f5);'
 require_line "network/index.html" "A global network for a"
 require_line "network/index.html" "Live Network"
 require_line "network/index.html" "People power<br />intelligence."
@@ -58,6 +69,15 @@ require_line "network/index.html" "../assets/mundusx-logo-official.svg"
 require_line "network/index.html" "../assets/network-hero-globe.png"
 require_line "network/index.html" "../assets/network-world-map-transparent.png"
 require_line "network/index.html" "../assets/network-cta-mountains.png"
+require_line "network/index.html" '--wrap: min(1680px, calc(100% - 88px))'
+require_line "network/index.html" '--wrap: min(100% - 36px, 768px)'
+require_line "network/index.html" '--wrap: min(100% - 26px, 375px)'
+require_line "network/index.html" 'font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;'
+require_line "network/index.html" '.mark { width: 42px; height: 28px; object-fit: contain; }'
+require_line "network/index.html" '.actions .btn {'
+require_line "device-identity/index.html" '--wrap: min(1680px, calc(100% - 88px))'
+require_line "device-identity/index.html" 'font: 600 18px/1.1 "Outfit", ui-sans-serif, system-ui, sans-serif;'
+require_line "device-identity/index.html" 'class="site-action primary"'
 require_line "install/index.html" "One command"
 require_line "install/index.html" "Fetching ./install.json"
 require_line "public/docs/install/index.html" "RELEASE_BASE_URL=http://127.0.0.1:8788/releases/latest/download bash install.sh"

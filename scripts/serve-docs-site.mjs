@@ -61,9 +61,15 @@ const server = createServer((req, res) => {
   }
 
   const contentType = MIME_TYPES[extname(filePath)] || "application/octet-stream";
-  res.writeHead(200, {
+  const headers = {
     "content-type": contentType,
     "content-length": stat.size,
+  };
+  if (contentType.startsWith("text/html")) {
+    headers["cache-control"] = "no-store, max-age=0";
+  }
+  res.writeHead(200, {
+    ...headers,
   });
   createReadStream(filePath).pipe(res);
 });

@@ -44,32 +44,38 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 writeDocsVariant({
   outputBaseDir: outputDir,
+  siteRootDepth: 0,
   eyebrow: "Public Repo Docs",
   homeIntro:
     "Public-facing documentation for install, device identity, and release flow previews in the MundusX repo.",
 });
 writeDocsVariant({
   outputBaseDir: path.join(outputDir, "docs"),
+  siteRootDepth: 1,
   eyebrow: "Local Docs Preview",
   homeIntro:
     "Local documentation preview for install, device identity, and release flow notes in the MundusX repo.",
 });
 writeDocsVariant({
   outputBaseDir: path.join(outputDir, "public", "docs"),
+  siteRootDepth: 2,
   eyebrow: "Public Endpoint Mirror",
   homeIntro:
     "GitHub Pages mirror of the public docs shape so install, device identity, and release pages can be reviewed before the final domain is wired up.",
 });
 writeMarketingHomepage();
 writeNetworkPage();
+writeAtlasPage();
+writeComputePage();
+writeDevelopersPage();
 writePublicInstallSurface();
 writePublicReleaseSurface();
 
 fs.writeFileSync(path.join(outputDir, ".nojekyll"), "\n");
 
-function writeDocsVariant({ outputBaseDir, eyebrow, homeIntro }) {
+function writeDocsVariant({ outputBaseDir, siteRootDepth, eyebrow, homeIntro }) {
   for (const page of pages) {
-    const html = renderPage(page, { eyebrow, homeIntro });
+    const html = renderPage(page, { siteRootDepth, eyebrow, homeIntro });
     const pageDir = page.slug ? path.join(outputBaseDir, page.slug) : outputBaseDir;
     fs.mkdirSync(pageDir, { recursive: true });
     fs.writeFileSync(path.join(pageDir, "index.html"), html);
@@ -80,6 +86,7 @@ function writeMarketingHomepage() {
   const assetDir = path.join(outputDir, "assets");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/meet-atlas-background.png"), path.join(assetDir, "meet-atlas-background.png"));
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   fs.writeFileSync(path.join(outputDir, "index.html"), renderMarketingHomePage());
 }
@@ -95,7 +102,43 @@ function writeNetworkPage() {
   fs.writeFileSync(path.join(networkDir, "index.html"), renderNetworkPage());
 }
 
+function writeAtlasPage() {
+  const assetDir = path.join(outputDir, "assets");
+  const atlasDir = path.join(outputDir, "atlas");
+  fs.mkdirSync(assetDir, { recursive: true });
+  fs.mkdirSync(atlasDir, { recursive: true });
+  fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/meet-atlas-background.png"), path.join(assetDir, "meet-atlas-background.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
+  fs.copyFileSync(path.join(repoRoot, "media/network-cta-mountains.png"), path.join(assetDir, "network-cta-mountains.png"));
+  fs.writeFileSync(path.join(atlasDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/atlas.html"), "utf8"));
+}
+
+function writeComputePage() {
+  const assetDir = path.join(outputDir, "assets");
+  const computeDir = path.join(outputDir, "compute");
+  fs.mkdirSync(assetDir, { recursive: true });
+  fs.mkdirSync(computeDir, { recursive: true });
+  fs.copyFileSync(path.join(repoRoot, "media/network-hero-globe.png"), path.join(assetDir, "network-hero-globe.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/network-cta-mountains.png"), path.join(assetDir, "network-cta-mountains.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
+  fs.writeFileSync(path.join(computeDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/compute.html"), "utf8"));
+}
+
+function writeDevelopersPage() {
+  const assetDir = path.join(outputDir, "assets");
+  const developersDir = path.join(outputDir, "developers");
+  fs.mkdirSync(assetDir, { recursive: true });
+  fs.mkdirSync(developersDir, { recursive: true });
+  fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/meet-atlas-background.png"), path.join(assetDir, "meet-atlas-background.png"));
+  fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
+  fs.writeFileSync(path.join(developersDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/developers.html"), "utf8"));
+}
+
 function renderMarketingHomePage() {
+  return fs.readFileSync(path.join(repoRoot, "media/homepage.html"), "utf8");
+
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -1226,11 +1269,10 @@ function renderMarketingHomePage() {
       <nav class="nav" aria-label="Primary">
         <a class="brand" href="./" aria-label="MundusX home">${brandMark()}<span>MundusX</span></a>
         <div class="links" aria-label="Sections">
-          <a href="./public/docs/">Product</a>
+          <a href="./atlas/">Atlas</a>
+          <a href="#compute">Compute</a>
           <a href="./network/">Network</a>
           <a href="./docs/">Developers</a>
-          <a href="./public/install/">Pricing</a>
-          <a href="./docs/device-identity/">About</a>
         </div>
         <div class="actions">
           <a class="btn ghost" href="./public/docs/">Sign in</a>
@@ -1491,6 +1533,9 @@ function renderNetworkPage() {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MundusX Network</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&display=swap" rel="stylesheet" />
     <style>
       :root {
         color-scheme: dark;
@@ -1508,6 +1553,7 @@ function renderNetworkPage() {
         --gold: #ffd95c;
         --rose: #ff5e72;
         --shadow: 0 26px 72px rgba(0, 0, 0, 0.42);
+        --wrap: min(1680px, calc(100% - 88px));
       }
       * { box-sizing: border-box; }
       html { background: var(--page); scroll-behavior: smooth; }
@@ -1543,27 +1589,33 @@ function renderNetworkPage() {
         position: sticky;
         top: 0;
         z-index: 50;
-        border-bottom: 1px solid rgba(92, 216, 255, 0.18);
-        background: rgba(2, 12, 22, 0.86);
-        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(56, 218, 255, 0.12);
+        background: rgba(2, 11, 19, 0.42);
+        transition: background 220ms ease, backdrop-filter 220ms ease;
+      }
+      .topbar.is-scrolled {
+        background: rgba(2, 12, 21, 0.78);
+        backdrop-filter: blur(18px);
       }
       .nav {
-        width: min(1740px, calc(100% - 104px));
-        height: 65px;
+        width: var(--wrap);
+        height: 68px;
         margin: 0 auto;
+        padding: 0 52px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 34px;
+        gap: 28px;
       }
       .brand {
         display: flex;
         align-items: center;
-        gap: 13px;
-        font-size: 19px;
-        font-weight: 800;
+        gap: 12px;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 18px;
+        font-weight: 600;
       }
-      .mark { width: 45px; height: 30px; object-fit: contain; filter: drop-shadow(0 0 16px rgba(32, 202, 255, 0.48)); }
+      .mark { width: 42px; height: 28px; object-fit: contain; }
       .brand small {
         display: block;
         margin-top: 2px;
@@ -1575,12 +1627,13 @@ function renderNetworkPage() {
       .links {
         display: flex;
         align-items: center;
-        gap: clamp(25px, 3vw, 48px);
-        color: #e6f0fb;
+        gap: clamp(26px, 3.2vw, 54px);
+        color: #e9f3fa;
         font-size: 13px;
-        font-weight: 650;
+        font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+        font-weight: 600;
       }
-      .links a { position: relative; padding: 25px 0 22px; }
+      .links a { position: relative; padding: 26px 0 23px; }
       .links a[aria-current="page"]::after {
         content: "";
         position: absolute;
@@ -1593,7 +1646,7 @@ function renderNetworkPage() {
         background: var(--accent);
         box-shadow: 0 0 16px var(--accent);
       }
-      .actions { display: flex; align-items: center; gap: 13px; }
+      .actions { display: flex; align-items: center; gap: 12px; font-family: "Outfit", ui-sans-serif, system-ui, sans-serif; }
       .btn {
         min-height: 44px;
         display: inline-flex;
@@ -1614,16 +1667,29 @@ function renderNetworkPage() {
         box-shadow: 0 0 28px rgba(32, 202, 255, 0.48), inset 0 1px rgba(255, 255, 255, 0.6);
       }
       .btn.ghost {
-        color: #f4f9ff;
-        background: rgba(2, 13, 24, 0.72);
-        box-shadow: inset 0 1px rgba(255, 255, 255, 0.14);
+        color: #f5f8fb;
+        background: rgba(3, 18, 30, 0.58);
+      }
+      .actions .btn {
+        min-height: 38px;
+        padding: 0 19px;
+        border-color: rgba(56, 218, 255, 0.46);
+        font-size: 12px;
+        transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      }
+      .actions .btn:hover { transform: translateY(-1px); border-color: rgba(56, 218, 255, 0.74); }
+      .actions .btn.primary {
+        border-color: transparent;
+        color: #02111d;
+        background: linear-gradient(135deg, #38daff, #22c9f5);
+        box-shadow: 0 16px 38px rgba(34, 201, 245, 0.22);
       }
       .section {
         position: relative;
         border-bottom: 1px solid rgba(68, 191, 238, 0.18);
       }
       .wrap {
-        width: min(1700px, calc(100% - 108px));
+        width: var(--wrap);
         margin: 0 auto;
       }
       .eyebrow {
@@ -1818,7 +1884,7 @@ function renderNetworkPage() {
       .metric-rail::before { top: 0; }
       .metric-rail::after { bottom: 0; }
       .metric-grid {
-        width: min(1700px, calc(100% - 108px));
+        width: var(--wrap);
         min-height: 116px;
         margin: 0 auto;
         display: grid;
@@ -2663,7 +2729,7 @@ function renderNetworkPage() {
         border-top: 1px solid rgba(68, 191, 238, 0.18);
       }
       .footer-main {
-        width: min(1700px, calc(100% - 108px));
+        width: var(--wrap);
         margin: 0 auto;
         display: grid;
         grid-template-columns: 1.6fr repeat(4, 1fr) 1.3fr;
@@ -2689,7 +2755,7 @@ function renderNetworkPage() {
       }
       .social svg { width: 19px; height: 19px; }
       .footer-bottom {
-        width: min(1700px, calc(100% - 108px));
+        width: var(--wrap);
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
@@ -2745,14 +2811,20 @@ function renderNetworkPage() {
         .footer-main { grid-template-columns: repeat(3, 1fr); }
         .social { justify-content: flex-start; }
       }
+      @media (max-width: 1020px) {
+        :root { --wrap: min(100% - 36px, 768px); }
+        .nav { padding: 0 28px; }
+        .links { display: none; }
+      }
       @media (max-width: 760px) {
         .nav,
         .wrap,
         .metric-grid,
         .footer-main,
         .footer-bottom {
-          width: min(100% - 30px, 680px);
+          width: var(--wrap);
         }
+        .nav { height: 64px; }
         .links { display: none; }
         .actions .ghost { display: none; }
         .hero .wrap { padding-top: 45px; }
@@ -2812,25 +2884,39 @@ function renderNetworkPage() {
         .cta-lines { justify-self: start; }
         .footer-bottom { flex-direction: column; }
       }
+      @media (max-width: 560px) {
+        :root { --wrap: min(100% - 26px, 375px); }
+        .nav { padding: 0 16px; }
+      }
     </style>
   </head>
   <body>
-    <header class="topbar">
+    <header class="topbar" id="topbar">
       <nav class="nav" aria-label="Primary">
         <a class="brand" href="../" aria-label="MundusX home">${logo()}<span>MundusX</span></a>
         <div class="links" aria-label="Sections">
-          <a href="../public/docs/">Product</a>
+          <a href="../atlas/">Atlas</a>
+          <a href="../compute/">Compute</a>
           <a href="./" aria-current="page">Network</a>
-          <a href="../docs/">Developers</a>
-          <a href="../public/install/">Pricing</a>
-          <a href="../docs/device-identity/">About</a>
+          <a href="../developers/">Developers</a>
         </div>
         <div class="actions">
           <a class="btn ghost" href="../public/docs/">Sign in</a>
-          <a class="btn primary" href="../public/install/">Get started <span aria-hidden="true">&rarr;</span></a>
+          <a class="btn primary" href="../public/install/">Get started</a>
         </div>
       </nav>
     </header>
+    <script>
+      (function () {
+        var topbar = document.getElementById("topbar");
+        if (!topbar) return;
+        function updateTopbar() {
+          topbar.classList.toggle("is-scrolled", window.scrollY > 16);
+        }
+        updateTopbar();
+        window.addEventListener("scroll", updateTopbar, { passive: true });
+      })();
+    </script>
     <main>
       <section class="section hero" aria-labelledby="network-title">
         <div class="wrap">
@@ -2839,7 +2925,7 @@ function renderNetworkPage() {
             <h1 id="network-title">A global network for a <span>brighter tomorrow.</span></h1>
             <p class="lead">A decentralized network of people, compute and ideas - powering a more open, accessible and intelligent future.</p>
             <div class="hero-buttons">
-              <a class="btn primary" href="../public/install/">Join the network <span aria-hidden="true">&rarr;</span></a>
+              <a class="btn primary" href="../public/install/">Join the network</a>
               <a class="btn ghost" href="#global-map">Explore the map</a>
             </div>
             <div class="mini-features">
@@ -3021,7 +3107,7 @@ function renderNetworkPage() {
               <span class="eyebrow">Be part of the network</span>
               <h2 id="join-title">Join a global community shaping the future of AI.</h2>
               <div class="cta-actions">
-                <a class="btn primary" href="../public/install/">Get started <span aria-hidden="true">&rarr;</span></a>
+                <a class="btn primary" href="../public/install/">Get started</a>
                 <a class="btn ghost" href="../public/docs/">Learn more</a>
               </div>
             </div>
@@ -3944,14 +4030,13 @@ function writePublicReleaseSurface() {
 }
 
 function renderPage(page, options) {
-  const { eyebrow, homeIntro } = options;
-  const nav = pages
-    .map((entry) => {
-      const href = relativeHref(page.slug, entry.slug);
-      const active = entry.slug === page.slug ? ' aria-current="page"' : "";
-      return `<a href="${href}"${active}>${escapeHtml(entry.title)}</a>`;
-    })
-    .join("");
+  const { siteRootDepth, eyebrow, homeIntro } = options;
+  const nav = [
+    `<a href="${siteHref(siteRootDepth, page.slug, "atlas/")}">Atlas</a>`,
+    `<a href="${siteHref(siteRootDepth, page.slug, "compute/")}">Compute</a>`,
+    `<a href="${siteHref(siteRootDepth, page.slug, "network/")}">Network</a>`,
+    `<a href="${siteHref(siteRootDepth, page.slug, "developers/")}">Developers</a>`,
+  ].join("");
 
   const body = page.sourcePath
     ? renderMarkdown(page, fs.readFileSync(page.sourcePath, "utf8"))
@@ -3963,6 +4048,9 @@ function renderPage(page, options) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(page.title)}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&display=swap" rel="stylesheet" />
     <style>
       :root {
         color-scheme: light;
@@ -3973,6 +4061,7 @@ function renderPage(page, options) {
         --accent: #0b6bcb;
         --border: #d9d2c3;
         --shadow: 0 18px 48px rgba(51, 42, 20, 0.08);
+        --wrap: min(1680px, calc(100% - 88px));
       }
       * { box-sizing: border-box; }
       body {
@@ -3982,12 +4071,12 @@ function renderPage(page, options) {
         color: var(--text);
       }
       a { color: var(--accent); }
-      header {
-        padding: 3rem 1.5rem 1rem;
+      .shell header {
+        padding: 0 0 1rem;
       }
       .shell {
-        width: min(1100px, calc(100% - 2rem));
-        margin: 0 auto 4rem;
+        width: var(--wrap);
+        margin: 2rem auto 4rem;
       }
       .hero {
         background: radial-gradient(circle at top left, rgba(11, 107, 203, 0.12), transparent 35%), var(--panel);
@@ -4018,25 +4107,98 @@ function renderPage(page, options) {
         line-height: 1.65;
         color: var(--muted);
       }
-      nav {
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid rgba(56, 218, 255, 0.12);
+        background: #020b13;
+      }
+      .topbar.is-scrolled {
+        background: #030f18;
+        box-shadow: 0 12px 32px rgba(2, 8, 14, 0.28);
+      }
+      .nav {
+        width: var(--wrap);
+        height: 68px;
+        margin: 0 auto;
+        padding: 0 52px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
       }
-      nav a {
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: #f5f8fb;
         text-decoration: none;
-        color: var(--text);
-        padding: 0.65rem 0.9rem;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.75);
-        font: 600 0.95rem/1.2 "Helvetica Neue", Arial, sans-serif;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-weight: 600;
+        font-size: 18px;
       }
-      nav a[aria-current="page"] {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: white;
+      .brand img {
+        width: 42px;
+        height: 28px;
+        object-fit: contain;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: clamp(26px, 3.2vw, 54px);
+        color: #e9f3fa;
+        font-size: 13px;
+        font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+        font-weight: 600;
+      }
+      .nav-links a {
+        position: relative;
+        padding: 26px 0 23px;
+        color: inherit;
+        text-decoration: none;
+      }
+      .nav-links a[aria-current="page"]::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 9px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        background: #31cfff;
+        box-shadow: 0 0 16px #31cfff;
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+      }
+      .nav-actions .button {
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(56, 218, 255, 0.46);
+        border-radius: 999px;
+        padding: 0 19px;
+        color: #f5f8fb;
+        background: rgba(3, 18, 30, 0.58);
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      }
+      .nav-actions .button:hover { transform: translateY(-1px); border-color: rgba(56, 218, 255, 0.74); }
+      .nav-actions .button.primary {
+        border-color: transparent;
+        color: #02111d;
+        background: linear-gradient(135deg, #38daff, #22c9f5);
+        box-shadow: 0 16px 38px rgba(34, 201, 245, 0.22);
       }
       main {
         margin-top: 1.5rem;
@@ -4105,7 +4267,31 @@ function renderPage(page, options) {
         color: var(--muted);
         font: 0.95rem/1.6 "Helvetica Neue", Arial, sans-serif;
       }
-      @media (max-width: 640px) {
+      @media (max-width: 1020px) {
+        :root { --wrap: min(100% - 36px, 768px); }
+        .nav {
+          padding: 0 28px;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+      @media (max-width: 760px) {
+        .nav {
+          height: 64px;
+        }
+        .nav-links {
+          display: none;
+        }
+        .nav-actions .button:first-child {
+          display: none;
+        }
+      }
+      @media (max-width: 560px) {
+        :root { --wrap: min(100% - 26px, 375px); }
+        .nav {
+          padding: 0 16px;
+        }
         .hero, main {
           padding: 1.4rem;
           border-radius: 22px;
@@ -4114,13 +4300,36 @@ function renderPage(page, options) {
     </style>
   </head>
   <body>
+    <header class="topbar" id="topbar">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="${siteHref(siteRootDepth, page.slug, "")}" aria-label="MundusX home">
+          <img src="${siteHref(siteRootDepth, page.slug, "assets/mundusx-logo-official.svg")}" alt="" aria-hidden="true" />
+          <span>MundusX</span>
+        </a>
+        <div class="nav-links" aria-label="Sections">${nav}</div>
+        <div class="nav-actions">
+          <a class="button" href="https://chat.mundusx.ai/">Sign in</a>
+          <a class="button primary" href="${siteHref(siteRootDepth, page.slug, "public/install/")}">Get started</a>
+        </div>
+      </nav>
+    </header>
+    <script>
+      (function () {
+        var topbar = document.getElementById("topbar");
+        if (!topbar) return;
+        function updateTopbar() {
+          topbar.classList.toggle("is-scrolled", window.scrollY > 16);
+        }
+        updateTopbar();
+        window.addEventListener("scroll", updateTopbar, { passive: true });
+      })();
+    </script>
     <div class="shell">
       <header>
         <div class="hero">
           <span class="eyebrow">${escapeHtml(eyebrow)}</span>
           <h1>${escapeHtml(page.title)}</h1>
           <p>${escapeHtml(page.intro)}</p>
-          <nav>${nav}</nav>
         </div>
       </header>
       <main>${body}</main>
@@ -4130,6 +4339,12 @@ function renderPage(page, options) {
     </div>
   </body>
 </html>`;
+}
+
+function siteHref(siteRootDepth, currentSlug, target) {
+  const depth = siteRootDepth + (currentSlug ? 1 : 0);
+  const prefix = depth === 0 ? "./" : "../".repeat(depth);
+  return `${prefix}${target}`;
 }
 
 function renderHome(homeIntro) {

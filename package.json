@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "MundusX public marketing/docs static site (home, docs, install, release pages).",
   "scripts": {
-    "dev": "npm run build:docs-site && PORT=3003 npm run serve:docs-site",
+    "dev": "PORT=3003 node scripts/watch-docs-site.mjs dist/public-docs-site",
     "build:docs-site": "node scripts/build-public-docs-site.mjs dist/public-docs-site",
     "serve:docs-site": "node scripts/serve-docs-site.mjs dist/public-docs-site",
     "test:docs-site": "bash tests/public-docs-site.sh"

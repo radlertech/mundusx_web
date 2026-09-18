@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MundusX Atlas</title>
+  <link rel="icon" href="../assets/mundusx-logo-official.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #02070d;
+      --ink: #f7fbff;
+      --muted: #9eb3c6;
+      --soft: #6e8599;
+      --line: rgba(111, 191, 255, .2);
+      --line-strong: rgba(141, 210, 255, .36);
+      --panel: rgba(5, 17, 28, .86);
+      --panel-2: rgba(9, 26, 42, .88);
+      --blue: #2fa8ff;
+      --cyan: #58d8ff;
+      --violet: #a66cff;
+      --wrap: min(1680px, calc(100% - 88px));
+      --shadow: 0 28px 90px rgba(0, 0, 0, .42);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #0b1621; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: "Outfit", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      background:
+        radial-gradient(circle at 51% 4%, rgba(38, 132, 255, .28), transparent 22rem),
+        linear-gradient(180deg, #0c1a28 0, #02070d 58%, #04101a 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(106, 198, 255, .35) 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 22%, rgba(106, 198, 255, .28) 0 1px, transparent 2px),
+        radial-gradient(circle at 46% 82%, rgba(106, 198, 255, .22) 0 1px, transparent 2px);
+      background-size: 172px 142px, 236px 178px, 212px 164px;
+      opacity: .34;
+      mask-image: linear-gradient(180deg, transparent, #000 14%, #000 82%, transparent);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img, svg { display: block; }
+    svg { stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    :focus-visible { outline: 3px solid var(--cyan); outline-offset: 4px; }
+
+    .page {
+      width: var(--wrap);
+      margin: 0 auto 32px;
+      overflow: hidden;
+      border-radius: 6px;
+      border: 0;
+      background: linear-gradient(180deg, rgba(2, 9, 16, .98), rgba(3, 14, 23, .98));
+      box-shadow: 0 34px 90px rgba(0, 0, 0, .42);
+    }
+
+    .topbar {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 52px;
+      border-bottom: 0;
+      background: rgba(2, 9, 16, .78);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 28px;
+      object-fit: contain;
+    }
+    .nav-links { display: flex; align-items: stretch; align-self: stretch; gap: 34px; font-family: "Outfit", ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 600; }
+    .nav-links a { display: flex; align-items: center; color: #dce9f4; border-bottom: 2px solid transparent; }
+    .nav-links a.is-active { color: var(--cyan); border-color: #1f9bff; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; font-family: "Outfit", ui-sans-serif, system-ui, sans-serif; }
+    .nav-actions a {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(56, 218, 255, .46);
+      border-radius: 999px;
+      padding: 0 19px;
+      color: #f5f8fb;
+      background: rgba(3, 18, 30, .58);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+    .nav-actions a:hover { transform: translateY(-1px); border-color: rgba(56, 218, 255, .74); }
+    .nav-actions a.primary {
+      border-color: transparent;
+      color: #02111d;
+      background: linear-gradient(135deg, #38daff, #22c9f5);
+      box-shadow: 0 16px 38px rgba(34, 201, 245, .22);
+    }
+    .mobile-actions { display: none; gap: 12px; align-items: center; }
+    .icon-button {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      color: #e7f2fb;
+      background: transparent;
+    }
+    .icon-button svg { width: 23px; height: 23px; stroke-width: 2; }
+
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: 0 28px;
+      color: #f7fbff;
+      background: rgba(4, 17, 29, .64);
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); border-color: rgba(120, 209, 255, .72); }
+    .btn.primary { border-color: transparent; color: #06111d; background: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.62), 0 12px 34px rgba(255, 255, 255, .12); }
+    .btn.small { min-height: 38px; padding: 0 24px; font-size: 12px; }
+    .btn svg { width: 18px; height: 18px; stroke-width: 2.3; }
+
+    .hero {
+      position: relative;
+      min-height: 670px;
+      padding: 78px 60px 62px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(2, 8, 15, .98) 0 30%, rgba(2, 8, 15, .6) 52%, rgba(2, 8, 15, .76) 100%),
+        linear-gradient(180deg, rgba(2, 8, 15, .06) 0%, rgba(2, 8, 15, .16) 58%, rgba(2, 8, 15, .86) 100%),
+        url("../assets/homepage-dark-bg.png") center bottom / cover no-repeat;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      left: 48.5%;
+      bottom: 168px;
+      width: 58px;
+      height: 245px;
+      border-radius: 50% 50% 8px 8px / 58% 58% 16px 16px;
+      background:
+        linear-gradient(90deg, rgba(11, 24, 39, .2), rgba(10, 26, 44, .94) 45%, rgba(73, 178, 255, .46) 50%, rgba(5, 14, 24, .92) 56%, rgba(2, 9, 16, .28)),
+        #06111d;
+      box-shadow:
+        0 0 0 1px rgba(109, 204, 255, .28),
+        0 0 34px rgba(65, 176, 255, .42),
+        26px 68px 64px rgba(2, 8, 15, .6);
+      transform: rotate(-1.5deg);
+      opacity: .95;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 260px;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(2, 8, 15, .84));
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(360px, 560px) 1fr 250px;
+      min-height: 530px;
+      gap: 42px;
+      align-items: center;
+    }
+
+    .hero-grid > div:first-child { position: relative; z-index: 2; }
+
+    .eyebrow {
+      display: block;
+      margin: 0 0 12px;
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 620px;
+      margin-bottom: 16px;
+      font-size: clamp(48px, 4.9vw, 78px);
+      line-height: .98;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+    .accent { color: #51b9ff; }
+    .lead { max-width: 560px; margin-bottom: 28px; color: #edf5fb; font-size: 18px; line-height: 1.45; font-weight: 400; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 34px; }
+
+    .quick-tools {
+      display: grid;
+      grid-template-columns: repeat(6, 74px);
+      gap: 18px;
+      align-items: start;
+    }
+    .quick-tool { display: grid; justify-items: center; gap: 10px; color: #f3f8fd; font-size: 12px; font-weight: 600; text-align: center; }
+    .quick-tool svg { width: 24px; height: 24px; stroke-width: 2; }
+
+    .atlas-wordmark {
+      align-self: end;
+      justify-self: center;
+      margin-top: 310px;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      font-weight: 700;
+      font-size: 38px;
+    }
+    .atlas-wordmark small { display: block; margin-top: 12px; color: var(--cyan); font-size: 12px; line-height: 1.5; letter-spacing: .28em; }
+    .idea-ladder { justify-self: end; display: grid; gap: 28px; color: #82cbff; font-size: 13px; }
+    .idea-ladder span { position: relative; padding-left: 40px; }
+    .idea-ladder span::before { content: ""; position: absolute; left: 0; top: 50%; width: 7px; height: 7px; border-radius: 50%; background: #bde9ff; box-shadow: 0 0 14px rgba(82, 185, 255, .72); }
+    .idea-ladder span::after { content: ""; position: absolute; left: 3px; top: 16px; width: 1px; height: 28px; background: rgba(82, 185, 255, .64); }
+    .idea-ladder span:last-child::after { display: none; }
+    .community-note { position: absolute; right: 64px; bottom: 36px; color: var(--cyan); font-size: 10px; font-weight: 800; letter-spacing: .28em; text-transform: uppercase; }
+
+    .section { padding: 0 60px; }
+    .workspace-shot {
+      position: relative;
+      margin-top: -2px;
+      padding: 0 0 78px;
+    }
+    .workspace-shell {
+      width: min(100%, 1540px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      min-height: 420px;
+      overflow: hidden;
+      border: 1px solid rgba(139, 202, 255, .28);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 78% 20%, rgba(65, 150, 255, .12), transparent 20rem),
+        rgba(3, 14, 23, .9);
+      box-shadow: var(--shadow);
+    }
+    .sidebar { padding: 22px 20px; border-right: 1px solid rgba(139, 202, 255, .16); background: rgba(1, 8, 14, .42); }
+    .sidebar-logo { margin-bottom: 16px; font-size: 18px; font-weight: 800; text-transform: uppercase; }
+    .side-item { min-height: 37px; display: flex; align-items: center; gap: 10px; padding: 0 10px; border-radius: 8px; color: #c9d9e5; font-size: 13px; }
+    .side-item.is-active { background: rgba(122, 180, 228, .14); color: #fff; }
+    .side-item svg { width: 17px; height: 17px; }
+    .profile { margin-top: 92px; color: #c9d9e5; font-size: 12px; }
+    .workspace-main { position: relative; display: grid; place-items: center; padding: 68px 48px; }
+    .expand { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(139, 202, 255, .26); border-radius: 8px; color: #d9eaf6; }
+    .assistant-panel { width: min(780px, 100%); text-align: center; }
+    .assistant-panel h2 { margin-bottom: 9px; font-size: 27px; font-weight: 500; }
+    .assistant-panel p { margin-bottom: 30px; color: #b6c7d5; font-size: 14px; }
+    .ask-box {
+      position: relative;
+      min-height: 124px;
+      display: grid;
+      align-content: space-between;
+      border: 1px solid rgba(118, 192, 255, .38);
+      border-radius: 18px;
+      background: rgba(9, 28, 45, .82);
+      box-shadow: inset 0 1px rgba(255, 255, 255, .04), 0 0 0 1px rgba(118, 192, 255, .06);
+      text-align: left;
+      padding: 23px 86px 24px 26px;
+    }
+    .ask-top { color: #9fb2c3; font-size: 18px; font-weight: 500; line-height: 1.2; }
+    .send {
+      position: absolute;
+      right: 24px;
+      bottom: 22px;
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff;
+      color: #07131f;
+      box-shadow: 0 10px 30px rgba(255, 255, 255, .12);
+    }
+    .send svg { width: 27px; height: 27px; stroke-width: 2.4; }
+    .ask-actions {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      color: #e6f1f8;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .ask-actions span {
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 18px;
+    }
+    .ask-actions span:first-child { padding-left: 0; }
+    .ask-actions span + span { border-left: 1px solid rgba(118, 192, 255, .16); }
+    .ask-actions svg { width: 21px; height: 21px; flex: 0 0 auto; stroke-width: 2; }
+    .prompt-chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 18px; }
+    .chip { min-height: 44px; display: grid; place-items: center; border: 1px solid rgba(118, 192, 255, .25); border-radius: 8px; color: #d9e6ef; background: rgba(4, 19, 31, .65); font-size: 12px; }
+
+    .features { padding-top: 6px; padding-bottom: 74px; }
+    .section-head { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; margin-bottom: 38px; }
+    .section-head h2 { margin: 0; font-size: 32px; line-height: 1.05; font-weight: 600; }
+    .section-head p { max-width: 630px; margin: 12px 0 0; color: #b6c7d5; font-size: 16px; line-height: 1.5; }
+    .feature-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 22px; }
+    .feature-card {
+      min-height: 170px;
+      padding: 26px 20px;
+      border: 1px solid rgba(118, 192, 255, .2);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(11, 31, 49, .88), rgba(5, 18, 30, .86));
+    }
+    .feature-card svg { width: 33px; height: 33px; margin-bottom: 20px; stroke-width: 1.9; color: var(--feature-color, #2fa8ff); }
+    .feature-card h3 { margin-bottom: 8px; font-size: 15px; font-weight: 700; }
+    .feature-card p { margin: 0; color: #b4c5d3; font-size: 12px; line-height: 1.35; }
+
+    .impact {
+      display: grid;
+      grid-template-columns: 1.2fr 1.4fr 1.25fr;
+      gap: 34px;
+      align-items: center;
+      padding-top: 6px;
+      padding-bottom: 66px;
+    }
+    .impact h2 { margin: 0 0 10px; font-size: 30px; line-height: 1.02; font-weight: 600; }
+    .impact p { margin: 0; color: #b6c7d5; font-size: 14px; line-height: 1.35; }
+    .stat-row { display: grid; grid-template-columns: repeat(4, max-content); gap: 40px; align-items: start; }
+    .stat strong { display: block; color: var(--cyan); font-size: 20px; font-weight: 600; }
+    .stat span { color: #d9e7f0; font-size: 11px; }
+    .cta-card {
+      min-height: 176px;
+      display: grid;
+      align-content: center;
+      gap: 16px;
+      padding: 24px;
+      border: 1px solid rgba(118, 192, 255, .35);
+      border-radius: 10px;
+      background:
+        linear-gradient(90deg, rgba(14, 41, 78, .78), rgba(21, 37, 77, .38)),
+        url("../assets/network-cta-mountains.png") center / cover no-repeat;
+    }
+    .cta-card h2 { margin: 0; font-size: 26px; line-height: 1.08; }
+    .cta-card p { max-width: 360px; color: #e0ebf3; }
+    .cta-card .btn { width: max-content; }
+
+    .trusted { padding-top: 6px; padding-bottom: 48px; text-align: center; }
+    .trusted-label { margin-bottom: 24px; color: #8ea6b8; font-size: 11px; font-weight: 700; letter-spacing: .34em; text-transform: uppercase; }
+    .logo-row { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(32px, 5vw, 82px); color: #d6e2eb; font-size: 24px; font-weight: 700; opacity: .9; }
+    .logo-row span { display: inline-flex; align-items: center; gap: 9px; }
+    .logo-row svg { width: 28px; height: 28px; }
+
+    .footer {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
+      gap: 34px;
+      padding: 30px 60px 36px;
+      border-top: 0;
+      background: rgba(2, 9, 16, .86);
+    }
+    .footer h3 { margin: 0 0 12px; font-size: 22px; text-transform: uppercase; }
+    .footer p, .footer a, .footer span { color: #b9c9d6; font-size: 13px; line-height: 1.9; }
+    .footer small { display: block; margin-top: 34px; color: #91a6b7; }
+    .footer strong { display: block; margin-bottom: 8px; color: #f0f7fc; font-size: 13px; }
+    .socials { display: flex; gap: 20px; align-items: start; color: #fff; }
+    .socials svg { width: 18px; height: 18px; }
+
+    @media (max-width: 1020px) {
+      :root { --wrap: min(100% - 36px, 768px); }
+      .page { margin-top: 18px; }
+      .topbar { padding: 0 28px; }
+      .nav-links, .nav-actions { display: none; }
+      .mobile-actions { display: flex; }
+      .hero { min-height: 610px; padding: 36px 28px 0; background-position: 58% bottom; }
+      .hero::before { display: none; }
+      .hero::after { height: 178px; opacity: .9; }
+      .hero-grid { grid-template-columns: 1fr; gap: 0; }
+      h1 { max-width: 470px; font-size: 43px; line-height: .96; }
+      .lead { max-width: 500px; margin-bottom: 20px; font-size: 15px; line-height: 1.45; }
+      .hero-ctas { margin-bottom: 22px; gap: 12px; }
+      .quick-tools { grid-template-columns: repeat(5, 64px); gap: 16px; margin-bottom: 245px; }
+      .quick-tool { font-size: 11px; }
+      .atlas-wordmark { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); margin: 0; font-size: 30px; }
+      .idea-ladder, .community-note { display: none; }
+      .section { padding-left: 28px; padding-right: 28px; }
+      .workspace-shot { padding-top: 34px; padding-bottom: 58px; }
+      .workspace-shell { grid-template-columns: 54px 1fr; min-height: 360px; }
+      .sidebar { padding: 16px 9px; }
+      .sidebar-logo, .side-item span, .profile { display: none; }
+      .side-item { justify-content: center; padding: 0; }
+      .workspace-main { padding: 54px 28px 34px; }
+      .assistant-panel { width: min(620px, 100%); text-align: left; }
+      .assistant-panel h2 { font-size: 20px; }
+      .ask-box { min-height: 112px; padding: 18px 72px 20px 20px; }
+      .ask-top { font-size: 14px; }
+      .ask-actions { font-size: 11px; }
+      .ask-actions span { gap: 6px; padding: 0 10px; }
+      .ask-actions svg { width: 17px; height: 17px; }
+      .send { right: 18px; bottom: 18px; width: 42px; height: 42px; }
+      .prompt-chips { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .features { padding-bottom: 64px; }
+      .feature-grid { grid-template-columns: repeat(3, 1fr); }
+      .section-head { display: block; }
+      .section-head .btn { display: none; }
+      .impact { grid-template-columns: 1fr; gap: 28px; padding-bottom: 58px; }
+      .stat-row { grid-template-columns: repeat(3, max-content); gap: 40px; }
+      .footer { grid-template-columns: 1fr auto; padding: 28px; }
+      .footer nav { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      :root { --wrap: min(100% - 26px, 375px); }
+      .page { margin-top: 13px; }
+      .topbar { height: 64px; padding: 0 16px; }
+      .mobile-actions { gap: 4px; }
+      .hero { min-height: 560px; padding: 26px 18px 0; background-position: 64% bottom; }
+      .hero::after { height: 150px; opacity: .86; }
+      .eyebrow { font-size: 10px; margin-bottom: 8px; }
+      h1 { font-size: 28px; max-width: 300px; }
+      .lead { font-size: 12px; max-width: 292px; }
+      .hero-ctas { display: grid; grid-template-columns: 1fr; }
+      .btn { min-height: 44px; font-size: 12px; }
+      .hero-ctas .btn:not(.primary) { background: rgba(2, 9, 16, .4); }
+      .quick-tools { display: none; }
+      .atlas-wordmark { bottom: 34px; font-size: 24px; }
+      .atlas-wordmark small { font-size: 8px; }
+      .hero-grid { min-height: 468px; }
+      .section { padding-left: 18px; padding-right: 18px; }
+      .workspace-shot { padding-top: 28px; padding-bottom: 46px; }
+      .workspace-shell { display: block; min-height: 0; border-radius: 10px; }
+      .sidebar, .expand { display: none; }
+      .workspace-main { padding: 22px 14px; }
+      .assistant-panel h2 { font-size: 17px; }
+      .assistant-panel p { font-size: 11px; margin-bottom: 14px; }
+      .ask-box { min-height: 96px; border-radius: 10px; padding: 14px 48px 14px 14px; }
+      .ask-top { font-size: 11px; }
+      .send { right: 12px; bottom: 12px; width: 36px; height: 36px; }
+      .send svg { width: 20px; height: 20px; }
+      .ask-actions { font-size: 8px; transform: scale(.92); transform-origin: left center; width: calc(100% / .92); }
+      .ask-actions span { gap: 4px; padding: 0 5px; }
+      .ask-actions svg { width: 13px; height: 13px; }
+      .prompt-chips { display: none; }
+      .features { padding-bottom: 48px; }
+      .section-head { margin-bottom: 24px; }
+      .section-head h2 { font-size: 19px; }
+      .section-head p { font-size: 11px; }
+      .feature-grid { grid-template-columns: 1fr; gap: 12px; }
+      .feature-card { min-height: 76px; display: grid; grid-template-columns: 42px 1fr; gap: 12px; align-items: center; padding: 14px; }
+      .feature-card svg { margin: 0; width: 30px; height: 30px; }
+      .feature-card h3 { margin: 0 0 4px; font-size: 12px; }
+      .feature-card p { font-size: 10px; }
+      .impact { padding-bottom: 42px; }
+      .impact h2 { font-size: 20px; }
+      .impact p { font-size: 11px; }
+      .stat-row { grid-template-columns: repeat(2, max-content); gap: 13px 34px; }
+      .stat strong { font-size: 18px; }
+      .stat span { font-size: 10px; }
+      .cta-card { min-height: 180px; padding: 18px; }
+      .cta-card h2 { font-size: 21px; }
+      .cta-card p { font-size: 11px; }
+      .trusted { padding-top: 0; }
+      .logo-row { justify-content: flex-start; gap: 18px 28px; font-size: 14px; }
+      .logo-row span:nth-child(n+4) { display: none; }
+      .logo-row svg { width: 20px; height: 20px; }
+      .footer { grid-template-columns: 1fr; padding: 26px 18px; }
+      .footer small { margin-top: 20px; }
+      .socials { margin-top: 6px; }
+    }
+
+    /* Keep the global navigation geometrically identical across marketing pages. */
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 50;
+      height: auto;
+      padding: 0;
+      border-bottom: 1px solid rgba(56, 218, 255, .12);
+      background: rgba(2, 11, 19, .42);
+      transition: background 220ms ease, backdrop-filter 220ms ease;
+    }
+    .topbar.is-scrolled { background: rgba(2, 12, 21, .78); backdrop-filter: blur(18px); }
+    .nav { width: var(--wrap); height: 68px; margin: 0 auto; padding: 0 52px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .nav .brand { gap: 12px; min-height: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 18px; text-transform: none; }
+    .nav .brand img { width: 42px; height: 28px; object-fit: contain; }
+    .nav .nav-links { align-self: auto; align-items: center; gap: clamp(26px, 3.2vw, 54px); color: #e9f3fa; }
+    .nav .nav-links a { position: relative; min-height: 0; color: inherit; border-bottom: 0; }
+    .nav .nav-links a.is-active { color: var(--cyan); }
+    .nav .nav-links a.is-active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -26px; height: 2px; background: #248edb; }
+    .nav .nav-actions { display: flex; gap: 12px; }
+    .header-button { min-height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 0 19px; border: 1px solid var(--line-strong); border-radius: 999px; color: #f5f8fb; background: rgba(3, 18, 30, .58); font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .header-button.primary { border-color: transparent; color: #02111d; background: linear-gradient(135deg, #38daff, #22c9f5); box-shadow: 0 16px 38px rgba(34, 201, 245, .22); }
+    .hero { padding-top: 146px; }
+    @media (max-width: 1020px) {
+      .page { margin-top: 0; }
+      .nav { padding: 0 28px; }
+      .nav .nav-links { display: none; }
+      .nav .nav-actions { display: flex; }
+      .mobile-actions { display: none; }
+      .hero { padding-top: 104px; }
+    }
+    @media (max-width: 760px) {
+      .nav { height: 64px; }
+      .nav .nav-actions .header-button:first-child { display: none; }
+    }
+    @media (max-width: 560px) {
+      .page { margin-top: 0; }
+      .topbar { height: auto; padding: 0; }
+      .nav { padding: 0 16px; }
+      .nav .brand { font-size: 18px; }
+      .nav .brand img { width: 42px; height: 28px; }
+      .hero { padding-top: 90px; }
+    }
+    @view-transition { navigation: auto; }
+    .topbar { view-transition-name: global-nav; }
+    main { view-transition-name: page-content; }
+    ::view-transition-old(global-nav), ::view-transition-new(global-nav) { animation: none; }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="topbar" id="topbar">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="../" aria-label="MundusX home"><img src="../assets/mundusx-logo-official.svg" alt="" aria-hidden="true" /><span>MundusX</span></a>
+        <div class="nav-links" aria-label="Sections">
+          <a class="is-active" href="./">Atlas</a>
+          <a href="../compute/">Compute</a>
+          <a href="../network/">Network</a>
+          <a href="../developers/">Developers</a>
+        </div>
+        <div class="nav-actions">
+          <a class="header-button" href="https://chat.mundusx.ai/">Sign in</a>
+          <a class="header-button primary" href="../public/install/">Get started</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="atlas-title">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">MundusX Atlas</span>
+            <h1 id="atlas-title">A more open AI for a <span class="accent">brighter</span> tomorrow.</h1>
+            <p class="lead">Atlas is your AI workspace, built for people, powered by a global compute network, and designed to help you think, create, and achieve more.</p>
+            <div class="hero-ctas">
+              <a class="btn primary" href="../public/install/">Get Started Free <svg viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg></a>
+              <a class="btn" href="#video">Watch Video <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="m10 8 6 4-6 4Z" /></svg></a>
+            </div>
+            <div class="quick-tools" aria-label="Atlas tools">
+              <span class="quick-tool"><svg viewBox="0 0 24 24"><path d="M5 6h14v9H8l-3 3Z" /><path d="M9 10h6" /></svg>Chat</span>
+              <span class="quick-tool"><svg viewBox="0 0 24 24"><path d="M5 18V6h8" /><path d="M13 4h7v7" /><path d="m20 4-9 9" /><path d="M8 14l2 2 5-5" /></svg>Create</span>
+              <span class="quick-tool"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5-8 4.5-8-4.5Z" /><path d="m4 12 8 4.5 8-4.5" /><path d="m4 16.5 8 4.5 8-4.5" /></svg>Analyze</span>
+              <span class="quick-tool"><svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4" /><path d="m16 8 4 4-4 4" /><path d="m14 4-4 16" /></svg>Code</span>
+              <span class="quick-tool"><svg viewBox="0 0 24 24"><path d="M12 3a4 4 0 0 0-4 4v3c0 3-2 4-2 6h12c0-2-2-3-2-6V7a4 4 0 0 0-4-4Z" /><path d="M9 19h6" /></svg>Research</span>
+              <span class="quick-tool"><svg viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /><circle cx="8" cy="7" r="1" /><circle cx="14" cy="12" r="1" /><circle cx="10" cy="17" r="1" /></svg>More</span>
+            </div>
+          </div>
+          <div class="atlas-wordmark" aria-hidden="true">Atlas<small>Your ideas.<br />A brighter tomorrow.</small></div>
+          <div class="idea-ladder" aria-hidden="true"><span>Ideas</span><span>Creativity</span><span>Productivity</span><span>Discovery</span><span>A better tomorrow</span></div>
+        </div>
+        <span class="community-note">Powered by a<br />global community</span>
+      </section>
+
+      <section class="section workspace-shot" aria-label="Atlas workspace preview">
+        <div class="workspace-shell">
+          <aside class="sidebar" aria-hidden="true">
+            <div class="sidebar-logo">MundusX</div>
+            <div class="side-item is-active"><svg viewBox="0 0 24 24"><path d="M12 5v14" /><path d="M5 12h14" /></svg><span>New chat</span></div>
+            <div class="side-item"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" /></svg><span>Discover</span></div>
+            <div class="side-item"><svg viewBox="0 0 24 24"><path d="M5 5h5v14H5z" /><path d="M14 5h5v14h-5z" /></svg><span>Library</span></div>
+            <div class="side-item"><svg viewBox="0 0 24 24"><path d="M7 7h4v4H7z" /><path d="M13 7h4v4h-4z" /><path d="M7 13h4v4H7z" /><path d="M13 13h4v4h-4z" /></svg><span>Agents</span></div>
+            <div class="side-item"><svg viewBox="0 0 24 24"><path d="M12 3 19 7v6c0 4-3 7-7 8-4-1-7-4-7-8V7Z" /></svg><span>Tools</span></div>
+            <div class="profile">Upgrade<br /><br />Lichard</div>
+          </aside>
+          <div class="workspace-main">
+            <span class="expand" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 3H3v5" /><path d="M16 3h5v5" /><path d="M8 21H3v-5" /><path d="M16 21h5v-5" /></svg></span>
+            <div class="assistant-panel">
+              <h2>Good morning, Lichard</h2>
+              <p>What would you like to explore today?</p>
+              <div class="ask-box">
+                <div class="ask-top">Ask anything...</div>
+                <div class="ask-actions">
+                  <span><svg viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /><circle cx="8" cy="7" r="1" /><circle cx="14" cy="12" r="1" /><circle cx="10" cy="17" r="1" /></svg>Deep Research</span>
+                  <span><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z" /><path d="m8 14 2-2 2 2 4-5" /></svg>Create Image</span>
+                  <span><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" /><path d="M14 3v5h5" /><path d="m9 15 2 2 4-5" /></svg>Analyze Files</span>
+                  <span><svg viewBox="0 0 24 24"><path d="M7 17c-2-1-3-3-3-5s1-4 3-5" /><path d="M17 7c2 1 3 3 3 5s-1 4-3 5" /><path d="m14 8-4 8" /></svg>Code</span>
+                </div>
+                <span class="send" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg></span>
+              </div>
+              <div class="prompt-chips"><span class="chip">Summarize this document</span><span class="chip">Help me plan a project</span><span class="chip">Generate an image</span><span class="chip">Explain this code</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section features">
+        <div class="section-head">
+          <div>
+            <h2>Built for real people.<br />Designed for what's next.</h2>
+            <p>From everyday questions to complex challenges, Atlas gives you the power of advanced AI in a simple, beautiful experience.</p>
+          </div>
+          <a class="btn" href="../docs/">Explore Features <svg viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg></a>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card"><svg viewBox="0 0 24 24"><path d="M5 6h14v9H8l-3 3Z" /><path d="M9 10h6" /></svg><div><h3>Chat Naturally</h3><p>Get clear, helpful answers in real time.</p></div></article>
+          <article class="feature-card" style="--feature-color:#a86cff"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z" /><path d="m8 14 2.5-3 3 4 2-2.5 2.5 3.5" /></svg><div><h3>Create Anything</h3><p>Turn ideas into images, designs and content.</p></div></article>
+          <article class="feature-card" style="--feature-color:#5b73ff"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 10-13h-7Z" /></svg><div><h3>Work Smarter</h3><p>Summarize, analyze and automate tasks.</p></div></article>
+          <article class="feature-card"><svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4" /><path d="m16 8 4 4-4 4" /><path d="m14 4-4 16" /></svg><div><h3>Build Faster</h3><p>Get help with code, debugging and more.</p></div></article>
+          <article class="feature-card" style="--feature-color:#b678ff"><svg viewBox="0 0 24 24"><path d="M4 5c4 0 6 1 8 3 2-2 4-3 8-3v14c-4 0-6 1-8 3-2-2-4-3-8-3Z" /><path d="M12 8v14" /></svg><div><h3>Go Deeper</h3><p>Research, learn and explore new ideas.</p></div></article>
+          <article class="feature-card"><svg viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M4 12h16" /><path d="M4 17h16" /><circle cx="8" cy="7" r="1" /><circle cx="14" cy="12" r="1" /><circle cx="10" cy="17" r="1" /></svg><div><h3>Your Way</h3><p>Customize with agents, tools and integrations.</p></div></article>
+        </div>
+      </section>
+
+      <section class="section impact">
+        <div><h2>Real impact.<br />Real possibilities.</h2><p>Used by students, developers, creators, businesses and curious minds around the world.</p></div>
+        <div class="stat-row"><div class="stat"><strong>215K+</strong><span>Active users</span></div><div class="stat"><strong>1.8M+</strong><span>Conversations daily</span></div><div class="stat"><strong>100+</strong><span>Countries</span></div><div class="stat"><strong>Built by a</strong><span>Global Community</span></div></div>
+        <div class="cta-card"><h2>Join a more open AI future.</h2><p>Be part of a global community using and building AI for a brighter tomorrow.</p><a class="btn primary" href="../public/install/">Get Started Free <svg viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg></a></div>
+      </section>
+
+      <section class="section trusted">
+        <div class="trusted-label">Trusted by individuals and teams worldwide</div>
+        <div class="logo-row" aria-label="Trusted logos">
+          <span><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4z" /><path d="M13 4h7v7h-7z" /><path d="M4 13h7v7H4z" /><path d="M13 13h7v7h-7z" /></svg>Microsoft</span>
+          <span><svg viewBox="0 0 24 24"><path d="M3 12s4-7 9-7 9 7 9 7-4 7-9 7-9-7-9-7Z" /><circle cx="12" cy="12" r="3" /></svg>NVIDIA</span>
+          <span><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3 19c.5.1.7-.2.7-.5v-2c-3 .7-3.6-1.3-3.6-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 0 1.6 1 1.6 1 .9 1.5 2.3 1.1 2.9.8.1-.6.4-1.1.7-1.3-2.4-.3-5-1.2-5-5.3 0-1.2.4-2.1 1-2.9-.1-.3-.4-1.4.1-2.8 0 0 .9-.3 3 1.1a10 10 0 0 1 5.2 0c2.1-1.4 3-1.1 3-1.1.5 1.4.2 2.5.1 2.8.6.8 1 1.7 1 2.9 0 4.1-2.5 5-5 5.3.4.3.8 1 .8 2v3c0 .3.2.6.8.5A10 10 0 0 0 12 2Z" /></svg>GitHub</span>
+          <span>Figma</span><span>Notion</span><span>stripe</span><span>Discord</span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div><h3>MundusX</h3><p>A more open, intelligent future.</p><small>© 2024 MundusX. All rights reserved.</small></div>
+      <nav><strong>Platform</strong><a href="./">Atlas</a><br /><a href="../compute/">Compute</a><br /><a href="../docs/">Developers</a></nav>
+      <nav><strong>Resources</strong><a href="../docs/">Documentation</a><br /><a href="../docs/">Support</a><br /><a href="../">Blog</a><br /><a href="../network/">Community</a></nav>
+      <nav><strong>Company</strong><a href="../docs/device-identity/">About</a><br /><a href="../docs/">Careers</a><br /><a href="../docs/">Privacy</a><br /><a href="../docs/">Terms</a></nav>
+      <div class="socials" aria-label="Social links">
+        <a href="https://github.com/mundusx/mundusx" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3 19c.5.1.7-.2.7-.5v-2c-3 .7-3.6-1.3-3.6-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 0 1.6 1 1.6 1 .9 1.5 2.3 1.1 2.9.8.1-.6.4-1.1.7-1.3-2.4-.3-5-1.2-5-5.3 0-1.2.4-2.1 1-2.9-.1-.3-.4-1.4.1-2.8 0 0 .9-.3 3 1.1a10 10 0 0 1 5.2 0c2.1-1.4 3-1.1 3-1.1.5 1.4.2 2.5.1 2.8.6.8 1 1.7 1 2.9 0 4.1-2.5 5-5 5.3.4.3.8 1 .8 2v3c0 .3.2.6.8.5A10 10 0 0 0 12 2Z" /></svg></a>
+        <span>in</span><span>▶</span><span>⌘</span>
+      </div>
+    </footer>
+  </div>
+  <script>
+    const topbar = document.getElementById('topbar');
+    const updateTopbar = () => topbar.classList.toggle('is-scrolled', window.scrollY > 16);
+    updateTopbar();
+    window.addEventListener('scroll', updateTopbar, { passive: true });
+  </script>
+</body>
+
+</html>
