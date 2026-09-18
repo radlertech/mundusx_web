@@ -26,6 +26,7 @@ require_line() {
 
 require_file "index.html"
 require_file "assets/homepage-dark-bg.png"
+require_file "assets/meet-atlas-background.png"
 require_file "assets/mundusx-logo-official.svg"
 require_file "assets/network-hero-globe.png"
 require_file "assets/network-world-map-transparent.png"
@@ -47,7 +48,8 @@ require_line "index.html" "Your AI."
 require_line "index.html" "Chat with Atlas"
 require_line "index.html" "Powered by people."
 require_line "index.html" "Your device can be"
-require_line "index.html" "./assets/homepage-dark-bg.png"
+require_line "index.html" "./assets/network-cta-mountains.png"
+require_line "index.html" "./assets/meet-atlas-background.png"
 require_line "index.html" "./assets/mundusx-logo-official.svg"
 require_line "index.html" '--wrap: min(1680px, calc(100% - 88px))'
 require_line "index.html" '--wrap: min(100% - 36px, 768px)'
@@ -76,8 +78,8 @@ require_line "network/index.html" 'font-family: "Outfit", ui-sans-serif, system-
 require_line "network/index.html" '.mark { width: 42px; height: 28px; object-fit: contain; }'
 require_line "network/index.html" '.actions .btn {'
 require_line "device-identity/index.html" '--wrap: min(1680px, calc(100% - 88px))'
-require_line "device-identity/index.html" 'font: 600 18px/1.1 "Outfit", ui-sans-serif, system-ui, sans-serif;'
-require_line "device-identity/index.html" 'class="site-action primary"'
+require_line "device-identity/index.html" 'font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;'
+require_line "device-identity/index.html" 'class="button primary"'
 require_line "install/index.html" "One command"
 require_line "install/index.html" "Fetching ./install.json"
 require_line "public/docs/install/index.html" "RELEASE_BASE_URL=http://127.0.0.1:8788/releases/latest/download bash install.sh"
