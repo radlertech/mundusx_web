@@ -1,6 +1,9 @@
 FROM node:22-alpine
 WORKDIR /app
 
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
 COPY install.sh install.ps1 ./
 COPY docs/ ./docs/
 COPY media/ ./media/
