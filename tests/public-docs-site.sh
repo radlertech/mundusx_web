@@ -25,20 +25,18 @@ require_line() {
 }
 
 require_file "index.html"
-require_file "assets/homepage-dark-bg.png"
-require_file "assets/meet-atlas-background.png"
 require_file "assets/mundusx-logo-official.svg"
-require_file "assets/network-hero-globe.png"
-require_file "assets/network-world-map-transparent.png"
-require_file "assets/network-cta-mountains.png"
 for size in mobile tablet desktop; do
   require_file "assets/network-cta-mountains-$size.webp"
   require_file "assets/meet-atlas-background-$size.webp"
   require_file "assets/network-hero-globe-$size.webp"
   require_file "assets/network-world-map-transparent-$size.webp"
+  require_file "assets/homepage-dark-bg-$size.webp"
 done
 require_file "atlas/index.html"
+require_file "compute/index.html"
 require_file "network/index.html"
+require_file "developers/index.html"
 require_file "install/index.html"
 require_file "device-identity/index.html"
 require_file "public/docs/index.html"
@@ -71,21 +69,38 @@ require_line "atlas/index.html" '--wrap: min(100% - 26px, 375px)'
 require_line "atlas/index.html" 'font-weight: 600;'
 require_line "atlas/index.html" 'border-bottom: 0;'
 require_line "atlas/index.html" 'background: linear-gradient(135deg, #38daff, #22c9f5);'
+require_line "atlas/index.html" "../assets/homepage-dark-bg-desktop.webp"
+require_line "atlas/index.html" "../assets/homepage-dark-bg-tablet.webp"
+require_line "atlas/index.html" "../assets/homepage-dark-bg-mobile.webp"
+require_line "atlas/index.html" 'data-bg-name="network-cta-mountains"'
+require_line "compute/index.html" "../assets/network-hero-globe-desktop.webp"
+require_line "compute/index.html" "../assets/network-hero-globe-tablet.webp"
+require_line "compute/index.html" "../assets/network-hero-globe-mobile.webp"
+require_line "compute/index.html" 'data-bg-name="network-cta-mountains"'
 require_line "network/index.html" "A global network for a"
 require_line "network/index.html" "Live Network"
 require_line "network/index.html" "People power<br />intelligence."
 require_line "network/index.html" "Users online"
 require_line "network/index.html" "A living, global network."
 require_line "network/index.html" "../assets/mundusx-logo-official.svg"
-require_line "network/index.html" "../assets/network-hero-globe.png"
-require_line "network/index.html" "../assets/network-world-map-transparent.png"
-require_line "network/index.html" "../assets/network-cta-mountains.png"
+require_line "network/index.html" "../assets/network-hero-globe-desktop.webp"
+require_line "network/index.html" "../assets/network-hero-globe-tablet.webp"
+require_line "network/index.html" "../assets/network-hero-globe-mobile.webp"
+require_line "network/index.html" "../assets/network-world-map-transparent-desktop.webp"
+require_line "network/index.html" "../assets/network-world-map-transparent-tablet.webp"
+require_line "network/index.html" "../assets/network-world-map-transparent-mobile.webp"
+require_line "network/index.html" 'loading="lazy"'
+require_line "network/index.html" 'data-bg-name="network-cta-mountains"'
 require_line "network/index.html" '--wrap: min(1680px, calc(100% - 88px))'
 require_line "network/index.html" '--wrap: min(100% - 36px, 768px)'
 require_line "network/index.html" '--wrap: min(100% - 26px, 375px)'
 require_line "network/index.html" 'font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;'
 require_line "network/index.html" '.mark { width: 42px; height: 28px; object-fit: contain; }'
 require_line "network/index.html" '.actions .btn {'
+require_line "developers/index.html" "../assets/homepage-dark-bg-desktop.webp"
+require_line "developers/index.html" "../assets/homepage-dark-bg-tablet.webp"
+require_line "developers/index.html" "../assets/homepage-dark-bg-mobile.webp"
+require_line "developers/index.html" 'data-bg-name="meet-atlas-background"'
 require_line "device-identity/index.html" '--wrap: min(1680px, calc(100% - 88px))'
 require_line "device-identity/index.html" 'font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;'
 require_line "device-identity/index.html" 'class="button primary"'

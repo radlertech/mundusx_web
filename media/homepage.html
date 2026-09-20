@@ -143,6 +143,61 @@
       font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
     }
 
+    .menu-toggle,
+    .mobile-menu {
+      display: none;
+    }
+
+    .menu-toggle {
+      min-width: 76px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid rgba(56, 218, 255, 0.46);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(3, 18, 30, 0.72);
+      font: 800 12px/1 "Outfit", ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .menu-toggle svg { width: 18px; height: 18px; }
+    .menu-toggle:focus-visible,
+    .mobile-menu a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+    .mobile-menu {
+      position: absolute;
+      top: 100%;
+      left: max(18px, calc((100% - 768px) / 2));
+      right: max(18px, calc((100% - 768px) / 2));
+      padding: 12px;
+      border: 1px solid rgba(56, 218, 255, 0.24);
+      background: #03121e;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.36);
+    }
+
+    .mobile-menu a {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      color: #e9f3fa;
+      font: 700 14px/1 "Outfit", ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .mobile-menu a + a { border-top: 1px solid rgba(56, 218, 255, 0.12); }
+    .mobile-menu .mobile-primary { margin-top: 8px; justify-content: center; border-radius: 6px; color: #02111d; background: #38daff; }
+    .topbar.is-menu-open .mobile-menu { display: grid; animation: menu-in 180ms ease-out both; }
+    .topbar.is-menu-open .mobile-menu a { animation: menu-item-in 220ms ease-out both; }
+    .topbar.is-menu-open .mobile-menu a:nth-child(2) { animation-delay: 20ms; }
+    .topbar.is-menu-open .mobile-menu a:nth-child(3) { animation-delay: 40ms; }
+    .topbar.is-menu-open .mobile-menu a:nth-child(4) { animation-delay: 60ms; }
+    .topbar.is-menu-open .mobile-menu a:nth-child(5) { animation-delay: 80ms; }
+    .topbar.is-menu-open .mobile-menu a:nth-child(6) { animation-delay: 100ms; }
+    @keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes menu-item-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .topbar.is-menu-open .mobile-menu, .topbar.is-menu-open .mobile-menu a { animation: none; } }
+
     .button {
       min-height: 44px;
       display: inline-flex;
@@ -2296,6 +2351,9 @@
       .nav-links {
         display: none;
       }
+
+      .nav-actions { display: none; }
+      .menu-toggle { display: inline-flex; }
     }
 
     @media (max-width: 760px) {
@@ -2310,6 +2368,8 @@
       .nav-actions .button:first-child {
         display: none;
       }
+
+      .nav-actions .button.primary { display: none; }
 
       .chapter {
         min-height: auto;
@@ -2864,7 +2924,14 @@
         <a class="button compact" href="https://chat.mundusx.ai/">Sign in</a>
         <a class="button primary compact" href="./public/install/">Get started</a>
       </div>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        <span>Menu</span>
+      </button>
     </nav>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="./atlas/">Atlas</a><a href="./compute/">Compute</a><a href="./network/">Network</a><a href="./developers/">Developers</a><a href="https://chat.mundusx.ai/">Sign in</a><a class="mobile-primary" href="./public/install/">Get started</a>
+    </div>
   </header>
 
   <main>
@@ -3500,6 +3567,18 @@
 
   <script>
     const topbar = document.getElementById("topbar");
+    const menuToggle = topbar.querySelector(".menu-toggle");
+    const mobileMenu = topbar.querySelector(".mobile-menu");
+    const setMenuOpen = (open) => {
+      topbar.classList.toggle("is-menu-open", open);
+      menuToggle.setAttribute("aria-expanded", String(open));
+    };
+    menuToggle.addEventListener("click", () => setMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true"));
+    topbar.querySelectorAll(".mobile-menu a").forEach((link) => link.addEventListener("click", () => setMenuOpen(false)));
+    document.addEventListener("pointerdown", (event) => {
+      if (!menuToggle.contains(event.target) && !mobileMenu.contains(event.target)) setMenuOpen(false);
+    });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") { setMenuOpen(false); menuToggle.focus(); } });
     const hero = document.querySelector(".hero");
     const atlasSection = document.getElementById("atlas");
     const atlasUi = document.getElementById("atlas-ui");

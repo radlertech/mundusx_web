@@ -94,7 +94,6 @@ function writeDocsVariant({ outputBaseDir, siteRootDepth, eyebrow, homeIntro }) 
 function writeMarketingHomepage() {
   const assetDir = path.join(outputDir, "assets");
   fs.mkdirSync(assetDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   fs.copyFileSync(path.join(repoRoot, "media/network-compute-globe.svg"), path.join(assetDir, "network-compute-globe.svg"));
   fs.copyFileSync(path.join(repoRoot, "node_modules/three/build/three.module.js"), path.join(assetDir, "three.module.js"));
@@ -111,9 +110,9 @@ function writeNetworkPage() {
   const networkDir = path.join(outputDir, "network");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(networkDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/network-hero-globe.png"), path.join(assetDir, "network-hero-globe.png"));
-  fs.copyFileSync(path.join(repoRoot, "media/network-world-map-transparent.png"), path.join(assetDir, "network-world-map-transparent.png"));
-  fs.copyFileSync(path.join(repoRoot, "media/network-cta-mountains.png"), path.join(assetDir, "network-cta-mountains.png"));
+  copyResponsiveVariants(assetDir, "network-hero-globe");
+  copyResponsiveVariants(assetDir, "network-world-map-transparent");
+  copyResponsiveVariants(assetDir, "network-cta-mountains");
   fs.writeFileSync(path.join(networkDir, "index.html"), renderNetworkPage());
 }
 
@@ -122,10 +121,9 @@ function writeAtlasPage() {
   const atlasDir = path.join(outputDir, "atlas");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(atlasDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
-  fs.copyFileSync(path.join(repoRoot, "media/meet-atlas-background.png"), path.join(assetDir, "meet-atlas-background.png"));
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
-  fs.copyFileSync(path.join(repoRoot, "media/network-cta-mountains.png"), path.join(assetDir, "network-cta-mountains.png"));
+  copyResponsiveVariants(assetDir, "homepage-dark-bg");
+  copyResponsiveVariants(assetDir, "network-cta-mountains");
   fs.writeFileSync(path.join(atlasDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/atlas.html"), "utf8"));
 }
 
@@ -134,9 +132,13 @@ function writeComputePage() {
   const computeDir = path.join(outputDir, "compute");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(computeDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/network-hero-globe.png"), path.join(assetDir, "network-hero-globe.png"));
-  fs.copyFileSync(path.join(repoRoot, "media/network-cta-mountains.png"), path.join(assetDir, "network-cta-mountains.png"));
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
+  copyResponsiveVariants(assetDir, "network-hero-globe");
+  copyResponsiveVariants(assetDir, "network-cta-mountains");
+  copyResponsiveVariants(assetDir, "compute-macbook-code");
+  copyResponsiveVariants(assetDir, "compute-macmini");
+  copyResponsiveVariants(assetDir, "compute-tower-slim");
+  copyResponsiveVariants(assetDir, "compute-blade-servers");
   fs.writeFileSync(path.join(computeDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/compute.html"), "utf8"));
 }
 
@@ -145,9 +147,9 @@ function writeDevelopersPage() {
   const developersDir = path.join(outputDir, "developers");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(developersDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
-  fs.copyFileSync(path.join(repoRoot, "media/meet-atlas-background.png"), path.join(assetDir, "meet-atlas-background.png"));
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
+  copyResponsiveVariants(assetDir, "homepage-dark-bg");
+  copyResponsiveVariants(assetDir, "meet-atlas-background");
   fs.writeFileSync(path.join(developersDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/developers.html"), "utf8"));
 }
 
@@ -1662,6 +1664,23 @@ function renderNetworkPage() {
         box-shadow: 0 0 16px var(--accent);
       }
       .actions { display: flex; align-items: center; gap: 12px; font-family: "Outfit", ui-sans-serif, system-ui, sans-serif; }
+      .menu-toggle, .mobile-menu { display: none; }
+      .menu-toggle { min-width: 76px; min-height: 44px; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--line-bright); border-radius: 999px; color: #f5f8fb; background: rgba(3,18,30,.72); font: 800 12px/1 "Outfit", sans-serif; }
+      .menu-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+      .mobile-menu { position: absolute; top: 100%; left: max(18px, calc((100% - 768px) / 2)); right: max(18px, calc((100% - 768px) / 2)); padding: 12px; border: 1px solid var(--line); background: #03121e; box-shadow: 0 18px 36px rgba(0,0,0,.36); }
+      .mobile-menu a { min-height: 48px; display: flex; align-items: center; padding: 0 14px; color: #e9f3fa; font: 700 14px/1 "Outfit", sans-serif; }
+      .mobile-menu a + a { border-top: 1px solid var(--line); }
+      .mobile-menu .mobile-primary { margin-top: 8px; justify-content: center; border-radius: 6px; color: #02111d; background: #38daff; }
+      .topbar.is-menu-open .mobile-menu { display: grid; animation: menu-in 180ms ease-out both; }
+      .topbar.is-menu-open .mobile-menu a { animation: menu-item-in 220ms ease-out both; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(2) { animation-delay: 20ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(3) { animation-delay: 40ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(4) { animation-delay: 60ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(5) { animation-delay: 80ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(6) { animation-delay: 100ms; }
+      @keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes menu-item-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+      @media (prefers-reduced-motion: reduce) { .topbar.is-menu-open .mobile-menu, .topbar.is-menu-open .mobile-menu a { animation: none; } }
       .btn {
         min-height: 44px;
         display: inline-flex;
@@ -1796,12 +1815,18 @@ function renderNetworkPage() {
         aspect-ratio: 1;
         transform: translate(-50%, -50%);
         border-radius: 0;
-        background: url("../assets/network-hero-globe.png") center / contain no-repeat;
+        background: url("../assets/network-hero-globe-desktop.webp") center / contain no-repeat;
         filter: drop-shadow(0 0 35px rgba(32, 202, 255, 0.26));
         opacity: 0.96;
         mix-blend-mode: screen;
         -webkit-mask-image: radial-gradient(circle closest-side at center, #000 0 58%, rgba(0, 0, 0, 0.7) 70%, transparent 86%);
         mask-image: radial-gradient(circle closest-side at center, #000 0 58%, rgba(0, 0, 0, 0.7) 70%, transparent 86%);
+      }
+      @media (max-width: 1020px) {
+        .planet { background-image: url("../assets/network-hero-globe-tablet.webp"); }
+      }
+      @media (max-width: 600px) {
+        .planet { background-image: url("../assets/network-hero-globe-mobile.webp"); }
       }
       .planet::before,
       .planet::after {
@@ -2199,29 +2224,23 @@ function renderNetworkPage() {
       @keyframes hiwPortStart {
         0%, 7% {
           opacity: 0.18;
-          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
         }
         12%, 18% {
           opacity: 0.95;
-          filter: drop-shadow(0 0 10px rgba(41, 213, 255, 0.92)) drop-shadow(0 0 2px #eafcff);
         }
         28%, 100% {
           opacity: 0.18;
-          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
         }
       }
       @keyframes hiwPortEnd {
         0%, 72% {
           opacity: 0.18;
-          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
         }
         82%, 91% {
           opacity: 0.98;
-          filter: drop-shadow(0 0 12px rgba(41, 213, 255, 0.95)) drop-shadow(0 0 2px #eafcff);
         }
         100% {
           opacity: 0.18;
-          filter: drop-shadow(0 0 2px rgba(41, 213, 255, 0.32));
         }
       }
 
@@ -2715,8 +2734,24 @@ function renderNetworkPage() {
         overflow: hidden;
         background:
           linear-gradient(90deg, rgba(3, 13, 23, 0.86) 0%, rgba(3, 18, 31, 0.4) 58%, rgba(2, 10, 18, 0.9) 100%),
-          url("../assets/network-cta-mountains.png") center 58% / cover no-repeat;
+          var(--bg-photo, none) center 58% / cover no-repeat,
+          #0a1720;
         box-shadow: var(--shadow);
+      }
+      .cta-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(100deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.07) 45%, rgba(255, 255, 255, 0) 90%);
+        background-size: 200% 100%;
+        animation: bg-shimmer 1.6s ease-in-out infinite;
+        opacity: 1;
+        transition: opacity 0.4s ease;
+      }
+      .cta-card.bg-loaded::before { opacity: 0; animation: none; }
+      @keyframes bg-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
       }
       .cta-card::after {
         content: "";
@@ -2830,6 +2865,8 @@ function renderNetworkPage() {
         :root { --wrap: min(100% - 36px, 768px); }
         .nav { padding: 0 28px; }
         .links { display: none; }
+        .actions { display: none; }
+        .menu-toggle { display: inline-flex; }
       }
       @media (max-width: 760px) {
         .nav,
@@ -2842,6 +2879,7 @@ function renderNetworkPage() {
         .nav { height: 64px; }
         .links { display: none; }
         .actions .ghost { display: none; }
+        .actions { display: none; }
         .hero .wrap { padding-top: 45px; }
         h1 {
           max-width: 100%;
@@ -2919,12 +2957,24 @@ function renderNetworkPage() {
           <a class="btn ghost" href="../public/docs/">Sign in</a>
           <a class="btn primary" href="../public/install/">Get started</a>
         </div>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg><span>Menu</span></button>
       </nav>
+      <div class="mobile-menu" id="mobile-menu"><a href="../atlas/">Atlas</a><a href="../compute/">Compute</a><a href="./" aria-current="page">Network</a><a href="../developers/">Developers</a><a href="../public/docs/">Sign in</a><a class="mobile-primary" href="../public/install/">Get started</a></div>
     </header>
     <script>
       (function () {
         var topbar = document.getElementById("topbar");
         if (!topbar) return;
+        var menuToggle = topbar.querySelector(".menu-toggle");
+        var mobileMenu = topbar.querySelector(".mobile-menu");
+        function setMenuOpen(open) {
+          topbar.classList.toggle("is-menu-open", open);
+          menuToggle.setAttribute("aria-expanded", String(open));
+        }
+        menuToggle.addEventListener("click", function () { setMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true"); });
+        topbar.querySelectorAll(".mobile-menu a").forEach(function (link) { link.addEventListener("click", function () { setMenuOpen(false); }); });
+        document.addEventListener("pointerdown", function (event) { if (!menuToggle.contains(event.target) && !mobileMenu.contains(event.target)) setMenuOpen(false); });
+        document.addEventListener("keydown", function (event) { if (event.key === "Escape") { setMenuOpen(false); menuToggle.focus(); } });
         function updateTopbar() {
           topbar.classList.toggle("is-scrolled", window.scrollY > 16);
         }
@@ -2995,7 +3045,11 @@ function renderNetworkPage() {
           </div>
           <div class="map-wrap" role="group" aria-label="Global MundusX network map showing active community and compute locations.">
             <div class="map-plane">
-              <img class="world-map" src="../assets/network-world-map-transparent.png" alt="" aria-hidden="true" />
+              <picture>
+                <source media="(max-width: 600px)" srcset="../assets/network-world-map-transparent-mobile.webp" />
+                <source media="(max-width: 1020px)" srcset="../assets/network-world-map-transparent-tablet.webp" />
+                <img class="world-map" src="../assets/network-world-map-transparent-desktop.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+              </picture>
               <svg class="map-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                 <path d="M24 30 C 32 18 42 24 46.4 30.8 C 51 35 56 37 61.5 45.5 C 66 50 70 55 74.5 61.2 C 78 67 82 71 82.5 73.3" />
                 <path d="M20.5 38.2 C 23 33 25 35 26.5 36.7 C 34 44 37 56 37 65.1 C 50 54 62 47 74.5 61.2" />
@@ -3117,7 +3171,7 @@ function renderNetworkPage() {
       </section>
       <section class="section cta-band" aria-labelledby="join-title">
         <div class="wrap">
-          <div class="cta-card">
+          <div class="cta-card" data-bg-name="network-cta-mountains">
             <div>
               <span class="eyebrow">Be part of the network</span>
               <h2 id="join-title">Join a global community shaping the future of AI.</h2>
@@ -3847,6 +3901,33 @@ function renderNetworkPage() {
         }
       })();
     </script>
+    <script>
+      (function () {
+        function imageSizeTier() {
+          if (window.matchMedia("(max-width: 600px)").matches) return "mobile";
+          if (window.matchMedia("(max-width: 1020px)").matches) return "tablet";
+          return "desktop";
+        }
+        var lazyBgObserver = new IntersectionObserver(
+          function (entries, obs) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              var el = entry.target;
+              obs.unobserve(el);
+              var url = "../assets/" + el.dataset.bgName + "-" + imageSizeTier() + ".webp";
+              var preload = new Image();
+              preload.onload = function () {
+                el.style.setProperty("--bg-photo", 'url("' + url + '")');
+                el.classList.add("bg-loaded");
+              };
+              preload.src = url;
+            });
+          },
+          { rootMargin: "400px 0px" },
+        );
+        document.querySelectorAll("[data-bg-name]").forEach(function (el) { lazyBgObserver.observe(el); });
+      })();
+    </script>
   </body>
 </html>`;
 }
@@ -4215,6 +4296,23 @@ function renderPage(page, options) {
         background: linear-gradient(135deg, #38daff, #22c9f5);
         box-shadow: 0 16px 38px rgba(34, 201, 245, 0.22);
       }
+      .menu-toggle, .mobile-menu { display: none; }
+      .menu-toggle { min-width: 76px; min-height: 44px; align-items: center; justify-content: center; gap: 8px; border: 1px solid rgba(56,218,255,.46); border-radius: 999px; color: #f5f8fb; background: rgba(3,18,30,.72); font: 800 12px/1 "Outfit", sans-serif; }
+      .menu-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+      .mobile-menu { position: absolute; top: 100%; left: max(18px, calc((100% - 768px) / 2)); right: max(18px, calc((100% - 768px) / 2)); padding: 12px; border: 1px solid rgba(56,218,255,.24); background: #03121e; box-shadow: 0 18px 36px rgba(0,0,0,.36); }
+      .mobile-menu a { min-height: 48px; display: flex; align-items: center; padding: 0 14px; color: #e9f3fa; font: 700 14px/1 "Outfit", sans-serif; text-decoration: none; }
+      .mobile-menu a + a { border-top: 1px solid rgba(56,218,255,.12); }
+      .mobile-menu .mobile-primary { margin-top: 8px; justify-content: center; border-radius: 6px; color: #02111d; background: #38daff; }
+      .topbar.is-menu-open .mobile-menu { display: grid; animation: menu-in 180ms ease-out both; }
+      .topbar.is-menu-open .mobile-menu a { animation: menu-item-in 220ms ease-out both; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(2) { animation-delay: 20ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(3) { animation-delay: 40ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(4) { animation-delay: 60ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(5) { animation-delay: 80ms; }
+      .topbar.is-menu-open .mobile-menu a:nth-child(6) { animation-delay: 100ms; }
+      @keyframes menu-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes menu-item-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+      @media (prefers-reduced-motion: reduce) { .topbar.is-menu-open .mobile-menu, .topbar.is-menu-open .mobile-menu a { animation: none; } }
       main {
         margin-top: 1.5rem;
         background: var(--panel);
@@ -4290,6 +4388,8 @@ function renderPage(page, options) {
         .nav-links {
           display: none;
         }
+        .nav-actions { display: none; }
+        .menu-toggle { display: inline-flex; }
       }
       @media (max-width: 760px) {
         .nav {
@@ -4301,6 +4401,7 @@ function renderPage(page, options) {
         .nav-actions .button:first-child {
           display: none;
         }
+        .nav-actions { display: none; }
       }
       @media (max-width: 560px) {
         :root { --wrap: min(100% - 26px, 375px); }
@@ -4326,12 +4427,24 @@ function renderPage(page, options) {
           <a class="button" href="https://chat.mundusx.ai/">Sign in</a>
           <a class="button primary" href="${siteHref(siteRootDepth, page.slug, "public/install/")}">Get started</a>
         </div>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg><span>Menu</span></button>
       </nav>
+      <div class="mobile-menu" id="mobile-menu">${nav}<a href="https://chat.mundusx.ai/">Sign in</a><a class="mobile-primary" href="${siteHref(siteRootDepth, page.slug, "public/install/")}">Get started</a></div>
     </header>
     <script>
       (function () {
         var topbar = document.getElementById("topbar");
         if (!topbar) return;
+        var menuToggle = topbar.querySelector(".menu-toggle");
+        var mobileMenu = topbar.querySelector(".mobile-menu");
+        function setMenuOpen(open) {
+          topbar.classList.toggle("is-menu-open", open);
+          menuToggle.setAttribute("aria-expanded", String(open));
+        }
+        menuToggle.addEventListener("click", function () { setMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true"); });
+        topbar.querySelectorAll(".mobile-menu a").forEach(function (link) { link.addEventListener("click", function () { setMenuOpen(false); }); });
+        document.addEventListener("pointerdown", function (event) { if (!menuToggle.contains(event.target) && !mobileMenu.contains(event.target)) setMenuOpen(false); });
+        document.addEventListener("keydown", function (event) { if (event.key === "Escape") { setMenuOpen(false); menuToggle.focus(); } });
         function updateTopbar() {
           topbar.classList.toggle("is-scrolled", window.scrollY > 16);
         }
