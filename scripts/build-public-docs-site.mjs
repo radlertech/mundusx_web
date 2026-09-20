@@ -11,6 +11,15 @@ const repoReleaseNotesUrl = "https://github.com/mundusx/mundusx/releases/latest"
 const installScriptContents = fs.readFileSync(path.join(repoRoot, "install.sh"), "utf8");
 const installPowershellContents = fs.readFileSync(path.join(repoRoot, "install.ps1"), "utf8");
 
+const RESPONSIVE_IMAGE_VARIANTS = ["mobile", "tablet", "desktop"];
+
+function copyResponsiveVariants(assetDir, baseName) {
+  for (const variant of RESPONSIVE_IMAGE_VARIANTS) {
+    const fileName = `${baseName}-${variant}.webp`;
+    fs.copyFileSync(path.join(repoRoot, "media", fileName), path.join(assetDir, fileName));
+  }
+}
+
 const pages = [
   {
     slug: "",
@@ -86,12 +95,14 @@ function writeMarketingHomepage() {
   const assetDir = path.join(outputDir, "assets");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.copyFileSync(path.join(repoRoot, "media/homepage-dark-bg.png"), path.join(assetDir, "homepage-dark-bg.png"));
-  fs.copyFileSync(path.join(repoRoot, "media/meet-atlas-background.png"), path.join(assetDir, "meet-atlas-background.png"));
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   fs.copyFileSync(path.join(repoRoot, "media/network-compute-globe.svg"), path.join(assetDir, "network-compute-globe.svg"));
-  fs.copyFileSync(path.join(repoRoot, "media/network-world-map-transparent.png"), path.join(assetDir, "network-world-map-transparent.png"));
   fs.copyFileSync(path.join(repoRoot, "node_modules/three/build/three.module.js"), path.join(assetDir, "three.module.js"));
   fs.copyFileSync(path.join(repoRoot, "node_modules/three/build/three.core.js"), path.join(assetDir, "three.core.js"));
+  copyResponsiveVariants(assetDir, "network-cta-mountains");
+  copyResponsiveVariants(assetDir, "meet-atlas-background");
+  copyResponsiveVariants(assetDir, "network-hero-globe");
+  copyResponsiveVariants(assetDir, "network-world-map-transparent");
   fs.writeFileSync(path.join(outputDir, "index.html"), renderMarketingHomePage());
 }
 

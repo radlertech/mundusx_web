@@ -338,7 +338,23 @@
       min-height: 100svh;
       background:
         linear-gradient(180deg, rgba(2, 11, 19, .18), rgba(2, 11, 19, .88)),
-        url("./assets/network-cta-mountains.png") center bottom / cover no-repeat;
+        url("./assets/network-cta-mountains-desktop.webp") center bottom / cover no-repeat;
+    }
+
+    @media (max-width: 1180px) {
+      .hero {
+        background-image:
+          linear-gradient(180deg, rgba(2, 11, 19, .18), rgba(2, 11, 19, .88)),
+          url("./assets/network-cta-mountains-tablet.webp");
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        background-image:
+          linear-gradient(180deg, rgba(2, 11, 19, .18), rgba(2, 11, 19, .88)),
+          url("./assets/network-cta-mountains-mobile.webp");
+      }
     }
 
     .hero .button {
@@ -716,6 +732,11 @@
       background: linear-gradient(180deg, #020b13 0%, #03111d 54%, #020b13 100%);
     }
 
+    @keyframes bgShimmer {
+      0% { background-position: -150% 0; }
+      100% { background-position: 250% 0; }
+    }
+
     .atlas::before {
       content: "";
       position: absolute;
@@ -725,11 +746,19 @@
       bottom: 0;
       width: 100%;
       aspect-ratio: 2048 / 768;
-      background: url("./assets/meet-atlas-background.png") center / 100% 100% no-repeat;
+      background-image: var(--atlas-bg, none), linear-gradient(100deg, rgba(255, 255, 255, .015) 20%, rgba(56, 218, 255, .05) 40%, rgba(255, 255, 255, .015) 60%);
+      background-position: center, 0 0;
+      background-size: 100% 100%, 200% 100%;
+      background-repeat: no-repeat, no-repeat;
+      animation: bgShimmer 1.8s ease-in-out infinite;
       opacity: .88;
       -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, .5) 16%, #000 40%, #000 100%);
       mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, .5) 16%, #000 40%, #000 100%);
       pointer-events: none;
+    }
+
+    .atlas.bg-loaded::before {
+      animation: none;
     }
 
     .atlas .wrap {
@@ -1076,9 +1105,18 @@
     .workspace {
       min-height: 1080px;
       isolation: isolate;
-      background:
+      background-image:
         linear-gradient(180deg, rgba(2, 11, 19, .9), rgba(2, 11, 19, .34) 55%, rgba(2, 11, 19, .12)),
-        url("./assets/meet-atlas-background.png") center bottom / cover no-repeat;
+        var(--workspace-bg, none),
+        linear-gradient(100deg, rgba(255, 255, 255, .015) 20%, rgba(56, 218, 255, .05) 40%, rgba(255, 255, 255, .015) 60%);
+      background-position: center bottom, center bottom, 0 0;
+      background-size: cover, cover, 200% 100%;
+      background-repeat: no-repeat, no-repeat, no-repeat;
+      animation: bgShimmer 1.8s ease-in-out infinite;
+    }
+
+    .workspace.bg-loaded {
+      animation: none;
     }
 
     .workspace::before {
@@ -1300,6 +1338,16 @@
       margin-left: auto;
       perspective: 1400px;
       isolation: isolate;
+      background-image: linear-gradient(100deg, rgba(255, 255, 255, .02) 20%, rgba(56, 218, 255, .06) 40%, rgba(255, 255, 255, .02) 60%);
+      background-size: 200% 100%;
+      background-position: 0 0;
+      border-radius: 50%;
+      animation: bgShimmer 1.8s ease-in-out infinite;
+    }
+
+    .community-globe.bg-loaded {
+      animation: none;
+      background-image: none;
     }
 
     .community-globe-canvas {
@@ -1333,7 +1381,7 @@
       inset: 0;
       border-radius: 50%;
       z-index: 0;
-      background: url("./assets/network-hero-globe.png") center / 106% 106% no-repeat;
+      background: var(--globe-bg, none) center / 106% 106% no-repeat;
       mix-blend-mode: screen;
       opacity: .94;
       mask-image: radial-gradient(circle at center, #000 0 58%, rgba(0, 0, 0, .96) 68%, rgba(0, 0, 0, .68) 78%, rgba(0, 0, 0, .22) 90%, transparent 100%);
@@ -2050,7 +2098,23 @@
       text-align: center;
       background:
         linear-gradient(180deg, rgba(2, 11, 19, .18), rgba(2, 11, 19, .88)),
-        url("./assets/network-cta-mountains.png") center bottom / cover no-repeat;
+        url("./assets/network-cta-mountains-desktop.webp") center bottom / cover no-repeat;
+    }
+
+    @media (max-width: 1180px) {
+      .final-cta {
+        background-image:
+          linear-gradient(180deg, rgba(2, 11, 19, .18), rgba(2, 11, 19, .88)),
+          url("./assets/network-cta-mountains-tablet.webp");
+      }
+    }
+
+    @media (max-width: 760px) {
+      .final-cta {
+        background-image:
+          linear-gradient(180deg, rgba(2, 11, 19, .18), rgba(2, 11, 19, .88)),
+          url("./assets/network-cta-mountains-mobile.webp");
+      }
     }
 
     .final-cta .wrap {
@@ -2971,7 +3035,7 @@
       </div>
     </section>
 
-    <section class="chapter atlas observe" id="atlas" aria-labelledby="atlas-title">
+    <section class="chapter atlas observe" id="atlas" aria-labelledby="atlas-title" data-bg-name="meet-atlas-background" data-bg-var="--atlas-bg">
       <div class="wrap split">
         <div class="atlas-copy">
           <span class="eyebrow atlas-eyebrow atlas-motion" data-atlas-motion="eyebrow">Meet Atlas</span>
@@ -3113,7 +3177,7 @@
       </div>
     </section>
 
-    <section class="chapter workspace observe" id="workspace" aria-labelledby="workspace-title">
+    <section class="chapter workspace observe" id="workspace" aria-labelledby="workspace-title" data-bg-name="meet-atlas-background" data-bg-var="--workspace-bg">
       <div class="wrap">
         <div class="center-copy">
           <span class="eyebrow reveal">One workspace</span>
@@ -3183,7 +3247,7 @@
             accessible, affordable and useful for everyone.</p>
           <div class="cta-row reveal delay-3"><a class="button primary" href="./network/">Explore the global network</a></div>
         </div>
-        <div class="community-globe" aria-label="Rotating 3D globe showing the global MundusX network">
+        <div class="community-globe" aria-label="Rotating 3D globe showing the global MundusX network" data-bg-name="network-hero-globe" data-bg-var="--globe-bg">
           <canvas class="community-globe-canvas" aria-hidden="true"></canvas>
           <div class="city ny" data-lat="40.7128" data-lon="-74.006">New York<small>USA</small></div>
           <div class="city ldn" data-lat="51.5072" data-lon="-0.1276">London<small>UK</small></div>
@@ -3585,6 +3649,28 @@
     }, { threshold: 0.24 });
     document.querySelectorAll(".observe").forEach((el) => observer.observe(el));
 
+    function imageSizeTier() {
+      if (window.matchMedia("(max-width: 760px)").matches) return "mobile";
+      if (window.matchMedia("(max-width: 1180px)").matches) return "tablet";
+      return "desktop";
+    }
+
+    const lazyBgObserver = new IntersectionObserver((entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const el = entry.target;
+        obs.unobserve(el);
+        const url = `./assets/${el.dataset.bgName}-${imageSizeTier()}.webp`;
+        const preload = new Image();
+        preload.onload = () => {
+          el.style.setProperty(el.dataset.bgVar, `url("${url}")`);
+          el.classList.add("bg-loaded");
+        };
+        preload.src = url;
+      }
+    }, { rootMargin: "400px 0px" });
+    document.querySelectorAll("[data-bg-name]").forEach((el) => lazyBgObserver.observe(el));
+
     function updateScroll() {
       const y = window.scrollY;
       topbar.classList.toggle("is-scrolled", y > 16);
@@ -3606,9 +3692,18 @@
         }
       }
     }
+    let scrollTicking = false;
+    function onScroll() {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        updateScroll();
+        scrollTicking = false;
+      });
+    }
     updateScroll();
     updateNetworkConnections();
-    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", () => requestAnimationFrame(updateNetworkConnections), { passive: true });
     if (window.ResizeObserver) {
       const networkFlow = document.querySelector(".network-flow");
@@ -3623,12 +3718,11 @@
     }
   </script>
   <script type="module">
-    import * as THREE from "./assets/three.module.js";
-
     const globeHost = document.querySelector(".community-globe");
     const globeCanvas = globeHost?.querySelector(".community-globe-canvas");
 
-    if (globeHost && globeCanvas) {
+    async function initGlobe() {
+      const THREE = await import("./assets/three.module.js");
       try {
         const renderer = new THREE.WebGLRenderer({
           canvas: globeCanvas,
@@ -3668,7 +3762,7 @@
         globeGroup.add(mapSphere);
 
         new THREE.TextureLoader().load(
-          "./assets/network-world-map-transparent.png",
+          `./assets/network-world-map-transparent-${imageSizeTier()}.webp`,
           (texture) => {
             texture.colorSpace = THREE.SRGBColorSpace;
             texture.wrapS = THREE.RepeatWrapping;
@@ -3782,7 +3876,7 @@
 
         const renderGlobe = () => {
           const delta = Math.min(clock.getDelta(), .05);
-          if (!prefersReducedMotion && globeVisible) {
+          if (!prefersReducedMotion) {
             globeGroup.rotation.y += delta * .075;
             routeMaterial.opacity = .58 + Math.sin(clock.elapsedTime * 1.4) * .12;
             routePackets.forEach((routePacket) => {
@@ -3792,7 +3886,7 @@
           }
           updateLabels();
           renderer.render(scene, camera);
-          requestAnimationFrame(renderGlobe);
+          if (globeVisible) requestAnimationFrame(renderGlobe);
         };
 
         resizeGlobe();
@@ -3800,13 +3894,29 @@
         renderer.render(scene, camera);
         new ResizeObserver(resizeGlobe).observe(globeHost);
         new IntersectionObserver(([entry]) => {
+          const wasVisible = globeVisible;
           globeVisible = entry.isIntersecting;
-          if (globeVisible) clock.getDelta();
+          if (globeVisible && !wasVisible) {
+            clock.getDelta();
+            renderGlobe();
+          }
         }, { rootMargin: "160px" }).observe(globeHost);
         renderGlobe();
       } catch (error) {
         console.warn("3D globe unavailable; using the static fallback.", error);
       }
+    }
+
+    if (globeHost && globeCanvas) {
+      const initObserver = new IntersectionObserver((entries, obs) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            obs.disconnect();
+            initGlobe();
+          }
+        }
+      }, { rootMargin: "600px 0px" });
+      initObserver.observe(globeHost);
     }
   </script>
 </body>

@@ -31,6 +31,12 @@ require_file "assets/mundusx-logo-official.svg"
 require_file "assets/network-hero-globe.png"
 require_file "assets/network-world-map-transparent.png"
 require_file "assets/network-cta-mountains.png"
+for size in mobile tablet desktop; do
+  require_file "assets/network-cta-mountains-$size.webp"
+  require_file "assets/meet-atlas-background-$size.webp"
+  require_file "assets/network-hero-globe-$size.webp"
+  require_file "assets/network-world-map-transparent-$size.webp"
+done
 require_file "atlas/index.html"
 require_file "network/index.html"
 require_file "install/index.html"
@@ -48,8 +54,11 @@ require_line "index.html" "Your AI."
 require_line "index.html" "Chat with Atlas"
 require_line "index.html" "Powered by people."
 require_line "index.html" "Your device can be"
-require_line "index.html" "./assets/network-cta-mountains.png"
-require_line "index.html" "./assets/meet-atlas-background.png"
+require_line "index.html" "./assets/network-cta-mountains-desktop.webp"
+require_line "index.html" "./assets/network-cta-mountains-tablet.webp"
+require_line "index.html" "./assets/network-cta-mountains-mobile.webp"
+require_line "index.html" 'data-bg-name="meet-atlas-background"'
+require_line "index.html" 'data-bg-name="network-hero-globe"'
 require_line "index.html" "./assets/mundusx-logo-official.svg"
 require_line "index.html" '--wrap: min(1680px, calc(100% - 88px))'
 require_line "index.html" '--wrap: min(100% - 36px, 768px)'
