@@ -2954,7 +2954,6 @@
           </div>
         </div>
         <div class="hero-stage" aria-label="Atlas product interface connected to a global network">
-          <p class="edge-note" aria-hidden="true">A more open<br />AI tomorrow</p>
           <div class="floating-ui">
             <aside class="app-side">
               <div class="mini-brand">
@@ -3236,9 +3235,6 @@
                     <path d="m5 12 7-7 7 7" />
                   </svg></span></div>
             </div>
-          </div>
-          <div class="margin-words" aria-hidden="true">
-            <span>Ideas</span><span>Research</span><span>Build</span><span>Together</span>
           </div>
         </div>
       </div>
@@ -3801,7 +3797,7 @@
     const globeCanvas = globeHost?.querySelector(".community-globe-canvas");
 
     async function initGlobe() {
-      const THREE = await import("./assets/three.module.js");
+      const THREE = await import("./assets/three.module.min.js");
       try {
         const renderer = new THREE.WebGLRenderer({
           canvas: globeCanvas,

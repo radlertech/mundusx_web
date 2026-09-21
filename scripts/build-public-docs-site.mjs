@@ -20,6 +20,11 @@ function copyResponsiveVariants(assetDir, baseName) {
   }
 }
 
+function copyThreeJs(assetDir) {
+  fs.copyFileSync(path.join(repoRoot, "node_modules/three/build/three.module.min.js"), path.join(assetDir, "three.module.min.js"));
+  fs.copyFileSync(path.join(repoRoot, "node_modules/three/build/three.core.min.js"), path.join(assetDir, "three.core.min.js"));
+}
+
 const pages = [
   {
     slug: "",
@@ -96,8 +101,7 @@ function writeMarketingHomepage() {
   fs.mkdirSync(assetDir, { recursive: true });
   fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   fs.copyFileSync(path.join(repoRoot, "media/network-compute-globe.svg"), path.join(assetDir, "network-compute-globe.svg"));
-  fs.copyFileSync(path.join(repoRoot, "node_modules/three/build/three.module.js"), path.join(assetDir, "three.module.js"));
-  fs.copyFileSync(path.join(repoRoot, "node_modules/three/build/three.core.js"), path.join(assetDir, "three.core.js"));
+  copyThreeJs(assetDir);
   copyResponsiveVariants(assetDir, "network-cta-mountains");
   copyResponsiveVariants(assetDir, "meet-atlas-background");
   copyResponsiveVariants(assetDir, "network-hero-globe");
@@ -110,6 +114,7 @@ function writeNetworkPage() {
   const networkDir = path.join(outputDir, "network");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(networkDir, { recursive: true });
+  copyThreeJs(assetDir);
   copyResponsiveVariants(assetDir, "network-hero-globe");
   copyResponsiveVariants(assetDir, "network-world-map-transparent");
   copyResponsiveVariants(assetDir, "network-cta-mountains");
@@ -1529,9 +1534,9 @@ function renderNetworkPage() {
     { d: "M999 356 C 1027 356 1082 352 1100 348", dur: 3.9, delay: 1.4, reverse: true, start: [999, 356], end: [1100, 348] },
   ];
   const hiwConnectorsC = [
-    { d: "M1242 238 C 1260 214 1283 198 1310 198", dur: 3.4, delay: 0.2, start: [1242, 238], end: [1310, 198] },
-    { d: "M1242 288 C 1264 288 1287 288 1310 288", dur: 4.7, delay: 1, start: [1242, 288], end: [1310, 288] },
-    { d: "M1242 338 C 1260 362 1283 378 1310 378", dur: 4, delay: 0.5, start: [1242, 338], end: [1310, 378] },
+    { d: "M1242 238 C 1278 214 1332 198 1378 198", dur: 3.4, delay: 0.2, start: [1242, 238], end: [1378, 198] },
+    { d: "M1242 288 C 1286 288 1332 288 1378 288", dur: 4.7, delay: 1, start: [1242, 288], end: [1378, 288] },
+    { d: "M1242 338 C 1278 362 1332 378 1378 378", dur: 4, delay: 0.5, start: [1242, 338], end: [1378, 378] },
   ];
   const hiwConnectorMarkup = (list) =>
     list
@@ -2015,13 +2020,7 @@ function renderNetworkPage() {
         margin-right: min(-5vw, -48px);
       }
       .map-wrap::before {
-        content: "";
-        position: absolute;
-        inset: 8% 2% 0;
-        background:
-          radial-gradient(circle at 78% 74%, rgba(38, 214, 255, 0.13), transparent 11rem),
-          radial-gradient(circle at 46% 44%, rgba(38, 214, 255, 0.11), transparent 18rem);
-        pointer-events: none;
+        display: none;
       }
       .map-plane {
         position: absolute;
@@ -2039,11 +2038,17 @@ function renderNetworkPage() {
         display: block;
         transform: none;
         object-fit: cover;
-        filter: brightness(1.08) contrast(1.05);
+        filter: brightness(1.16) contrast(1.32);
         mix-blend-mode: screen;
-        opacity: 0.5;
-        -webkit-mask-image: radial-gradient(ellipse at center, #000 0 42%, rgba(0, 0, 0, 0.54) 58%, rgba(0, 0, 0, 0.16) 72%, transparent 86%);
-        mask-image: radial-gradient(ellipse at center, #000 0 42%, rgba(0, 0, 0, 0.54) 58%, rgba(0, 0, 0, 0.16) 72%, transparent 86%);
+        opacity: 0.58;
+        -webkit-mask-image:
+          linear-gradient(90deg, transparent 0%, #000 13%, #000 87%, transparent 100%),
+          linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-image:
+          linear-gradient(90deg, transparent 0%, #000 13%, #000 87%, transparent 100%),
+          linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+        mask-composite: intersect;
       }
       .map-arcs {
         position: absolute;
@@ -2214,6 +2219,38 @@ function renderNetworkPage() {
         animation: hiwParticle 5s ease-in-out infinite;
       }
       .hiw-connectors .hiw-packet.is-reverse { animation-direction: reverse; }
+      .hiw-responsive-connectors {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        overflow: visible;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .hiw-responsive-link {
+        fill: none;
+        stroke: rgba(40, 201, 245, 0.5);
+        stroke-width: 1.4;
+        vector-effect: non-scaling-stroke;
+        filter: drop-shadow(0 0 4px rgba(41, 213, 255, 0.35));
+      }
+      .hiw-responsive-link-signal {
+        fill: none;
+        stroke: rgba(205, 244, 255, 0.78);
+        stroke-width: 1.8;
+        stroke-dasharray: 3 18;
+        vector-effect: non-scaling-stroke;
+        animation: hiwResponsiveSignal 4s linear infinite;
+      }
+      .hiw-responsive-port {
+        fill: #45dcff;
+        filter: drop-shadow(0 0 6px rgba(41, 213, 255, 0.85));
+      }
+      @keyframes hiwResponsiveSignal {
+        to { stroke-dashoffset: -42; }
+      }
       @keyframes hiwParticle {
         0%, 8% { opacity: 0; offset-distance: 0%; }
         14%, 22% { opacity: 1; }
@@ -2418,6 +2455,11 @@ function renderNetworkPage() {
         transition: opacity 400ms ease;
       }
       .hiw-globe-fallback.is-visible { opacity: 1; }
+      .hiw-globe-fallback.is-loading { animation: hiwGlobeShimmer 1.6s ease-in-out infinite; }
+      @keyframes hiwGlobeShimmer {
+        0%, 100% { opacity: 0.55; }
+        50% { opacity: 0.95; }
+      }
       .hiw-globe-core {
         position: absolute;
         left: 50%;
@@ -2535,7 +2577,7 @@ function renderNetworkPage() {
         top: 50%;
         transform: translateY(-50%);
         z-index: 4;
-        width: clamp(300px, 20vw, 340px);
+        width: clamp(240px, 16vw, 272px);
         border: 1px solid rgba(27, 184, 231, 0.38);
         border-radius: 16px;
         background: rgba(3, 22, 35, 0.88);
@@ -2623,6 +2665,7 @@ function renderNetworkPage() {
       }
       @media (prefers-reduced-motion: reduce) {
         .hiw-globe-stage,
+        .hiw-globe-fallback.is-loading,
         .hiw-server .led,
         .hiw-live .dot,
         .hiw-connectors .hiw-packet,
@@ -2631,6 +2674,7 @@ function renderNetworkPage() {
         }
         .hiw-connectors .hiw-packet { opacity: 0.55; }
         .hiw-connectors .hiw-port { opacity: 0.45; }
+        .hiw-responsive-link-signal { animation: none; }
       }
       .activity .wrap {
         min-height: 390px;
@@ -2829,23 +2873,22 @@ function renderNetworkPage() {
         .feature-grid {
           grid-template-columns: repeat(2, 1fr);
         }
+        .map-wrap {
+          width: 100%;
+          margin-right: 0;
+          overflow: hidden;
+        }
+        .map-plane { width: min(900px, 120vw); }
         .hiw-flow {
           position: relative;
           min-height: 0;
-          display: flex;
-          flex-direction: column;
+          display: grid;
+          grid-template-columns: minmax(320px, 468px) minmax(300px, 420px);
           align-items: center;
-          gap: 46px;
+          justify-content: center;
+          gap: 32px clamp(28px, 4vw, 64px);
         }
-        .hiw-flow::after {
-          content: "";
-          position: absolute;
-          left: 50%;
-          top: 0;
-          bottom: 0;
-          width: 1px;
-          background: linear-gradient(180deg, transparent, rgba(41, 197, 246, 0.4) 15%, rgba(41, 197, 246, 0.4) 85%, transparent);
-        }
+        .hiw-flow::after { display: none; }
         .hiw-community,
         .hiw-globe-stage,
         .hiw-compute,
@@ -2854,9 +2897,42 @@ function renderNetworkPage() {
           transform: none;
         }
         .hiw-community,
-        .hiw-capability { width: min(468px, 100%); }
-        .hiw-globe-stage { width: min(460px, 82vw); }
+        .hiw-capability { width: 100%; }
+        .hiw-community {
+          grid-column: 1;
+          grid-row: 1;
+          padding: 18px;
+        }
+        .hiw-community .hiw-member:nth-child(n + 4) { display: none; }
+        .hiw-community .hiw-nav { display: none; }
+        .hiw-community .hiw-member-grid,
+        .hiw-community .hiw-stats { margin-top: 14px; }
+        .hiw-globe-stage {
+          position: relative;
+          left: auto;
+          top: auto;
+          grid-column: 2;
+          grid-row: 1;
+          width: min(380px, 100%);
+          height: auto;
+          aspect-ratio: 1 / 1;
+          justify-self: center;
+        }
+        .hiw-compute {
+          grid-column: 1;
+          grid-row: 2;
+          justify-self: center;
+        }
+        .hiw-capability {
+          position: relative;
+          right: auto;
+          top: auto;
+          grid-column: 2;
+          grid-row: 2;
+        }
         .hiw-connectors { display: none; }
+        .hiw-responsive-connectors { display: block; }
+        .hiw-tag,
         .hiw-tag-lines { display: none; }
         .footer-main { grid-template-columns: repeat(3, 1fr); }
         .social { justify-content: flex-start; }
@@ -2921,12 +2997,33 @@ function renderNetworkPage() {
         }
         .community .wrap,
         .activity .wrap { padding: 52px 0; gap: 34px; }
-        .map-wrap { min-height: 360px; overflow: visible; }
-        .map-plane { width: 760px; }
+        .map-wrap {
+          min-height: 360px;
+          overflow: hidden;
+        }
+        .map-plane { width: min(680px, 165vw); }
+        .point-tip { display: none; }
         .how { padding-top: 48px; }
+        .hiw-flow {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 28px;
+        }
         .hiw-community,
         .hiw-capability { width: 100%; }
-        .hiw-globe-stage { width: min(340px, 86vw); }
+        .hiw-community,
+        .hiw-globe-stage,
+        .hiw-compute,
+        .hiw-capability {
+          grid-column: auto;
+          grid-row: auto;
+        }
+        .hiw-globe-stage {
+          width: min(320px, 82vw);
+          flex: 0 0 auto;
+          align-self: center;
+        }
         .hiw-member-grid { gap: 7px; }
         .hiw-nav { display: none; }
         .hiw-strip { flex-direction: column; align-items: flex-start; gap: 18px; }
@@ -3081,6 +3178,7 @@ function renderNetworkPage() {
               ${hiwConnectorMarkup(hiwConnectorsB)}
               ${hiwConnectorMarkup(hiwConnectorsC)}
             </svg>
+            <svg class="hiw-responsive-connectors" id="hiwResponsiveConnectors" aria-hidden="true"></svg>
 
             <div class="hiw-community" id="hiwCommunity">
               <button class="hiw-nav prev" type="button" aria-label="Previous community" id="hiwPrev">&lsaquo;</button>
@@ -3211,6 +3309,87 @@ function renderNetworkPage() {
         var HUES = ${JSON.stringify(hiwAvatarHues())};
         var flow = document.getElementById("hiwFlow");
         if (!flow) return;
+
+        var responsiveConnectors = document.getElementById("hiwResponsiveConnectors");
+        var community = document.getElementById("hiwCommunity");
+        var globeStage = document.getElementById("hiwGlobeStage");
+        var compute = flow.querySelector(".hiw-compute");
+        var capability = flow.querySelector(".hiw-capability");
+
+        function updateResponsiveConnectors() {
+          if (!responsiveConnectors || getComputedStyle(responsiveConnectors).display === "none") return;
+          var flowRect = flow.getBoundingClientRect();
+          if (!flowRect.width || !flowRect.height) return;
+
+          function bounds(element) {
+            var rect = element.getBoundingClientRect();
+            return {
+              left: rect.left - flowRect.left,
+              right: rect.right - flowRect.left,
+              top: rect.top - flowRect.top,
+              bottom: rect.bottom - flowRect.top,
+              centerX: rect.left - flowRect.left + rect.width / 2,
+              centerY: rect.top - flowRect.top + rect.height / 2,
+            };
+          }
+
+          var cardBox = bounds(community);
+          var globeBox = bounds(globeStage);
+          var computeBox = bounds(compute);
+          var capabilityBox = bounds(capability);
+          var globeInset = (globeBox.right - globeBox.left) * 0.14;
+          var globeVisual = {
+            left: globeBox.left + globeInset,
+            right: globeBox.right - globeInset,
+            top: globeBox.top + globeInset,
+            bottom: globeBox.bottom - globeInset,
+            centerX: globeBox.centerX,
+            centerY: globeBox.centerY,
+          };
+          var mobile = window.matchMedia("(max-width: 760px)").matches;
+          var links;
+
+          if (mobile) {
+            links = [
+              [[cardBox.centerX, cardBox.bottom], [globeVisual.centerX, globeVisual.top]],
+              [[globeVisual.centerX, globeVisual.bottom], [computeBox.centerX, computeBox.top]],
+              [[computeBox.centerX, computeBox.bottom], [capabilityBox.centerX, capabilityBox.top]],
+            ];
+          } else {
+            var firstMidX = (cardBox.right + globeVisual.left) / 2;
+            var secondMidY = (globeVisual.bottom + computeBox.top) / 2;
+            var thirdMidX = (computeBox.right + capabilityBox.left) / 2;
+            links = [
+              [[cardBox.right, cardBox.centerY], [firstMidX, cardBox.centerY], [firstMidX, globeVisual.centerY], [globeVisual.left, globeVisual.centerY]],
+              [[globeVisual.centerX, globeVisual.bottom], [globeVisual.centerX, secondMidY], [computeBox.centerX, secondMidY], [computeBox.centerX, computeBox.top]],
+              [[computeBox.right, computeBox.centerY], [thirdMidX, computeBox.centerY], [thirdMidX, capabilityBox.centerY], [capabilityBox.left, capabilityBox.centerY]],
+            ];
+          }
+
+          function pathData(points) {
+            return points.map(function (point, index) {
+              return (index ? "L" : "M") + point[0].toFixed(1) + " " + point[1].toFixed(1);
+            }).join(" ");
+          }
+
+          responsiveConnectors.setAttribute("viewBox", "0 0 " + flowRect.width + " " + flowRect.height);
+          responsiveConnectors.innerHTML = links.map(function (points) {
+            var d = pathData(points);
+            var start = points[0];
+            var end = points[points.length - 1];
+            return '<path class="hiw-responsive-link" d="' + d + '" />' +
+              '<path class="hiw-responsive-link-signal" d="' + d + '" />' +
+              '<circle class="hiw-responsive-port" cx="' + start[0].toFixed(1) + '" cy="' + start[1].toFixed(1) + '" r="3.5" />' +
+              '<circle class="hiw-responsive-port" cx="' + end[0].toFixed(1) + '" cy="' + end[1].toFixed(1) + '" r="3.5" />';
+          }).join("");
+        }
+
+        updateResponsiveConnectors();
+        if (typeof ResizeObserver !== "undefined") {
+          new ResizeObserver(updateResponsiveConnectors).observe(flow);
+        } else {
+          window.addEventListener("resize", updateResponsiveConnectors);
+        }
 
         var cityEl = document.getElementById("hiwCity");
         var subEl = document.getElementById("hiwSub");
@@ -3375,20 +3554,68 @@ function renderNetworkPage() {
         var tagElements = Array.prototype.slice.call(document.querySelectorAll(".hiw-tag"));
 
         function showFallback() {
-          if (fallback) fallback.classList.add("is-visible");
+          if (fallback) {
+            fallback.classList.remove("is-loading");
+            fallback.classList.add("is-visible");
+          }
         }
 
-        import("https://unpkg.com/three@0.160.0/build/three.module.js")
-          .then(function (THREE) {
-            try {
-              initGlobe(THREE);
-            } catch (err) {
-              showFallback();
-            }
-          })
-          .catch(function () {
+        function showLoading() {
+          if (fallback) fallback.classList.add("is-visible", "is-loading");
+        }
+
+        function hideLoading() {
+          if (fallback) fallback.classList.remove("is-visible", "is-loading");
+        }
+
+        function loadGlobe() {
+          showLoading();
+          var settled = false;
+          var loadTimeout = setTimeout(function () {
+            if (settled) return;
+            settled = true;
+            console.warn("[hiw-globe] timed out waiting for three.js / globe init");
             showFallback();
-          });
+          }, 9000);
+          import("../assets/three.module.min.js")
+            .then(function (THREE) {
+              if (settled) return;
+              try {
+                initGlobe(THREE);
+                settled = true;
+                clearTimeout(loadTimeout);
+              } catch (err) {
+                settled = true;
+                clearTimeout(loadTimeout);
+                console.warn("[hiw-globe] initGlobe failed:", err);
+                showFallback();
+              }
+            })
+            .catch(function (err) {
+              if (settled) return;
+              settled = true;
+              clearTimeout(loadTimeout);
+              console.warn("[hiw-globe] failed to load three.js:", err);
+              showFallback();
+            });
+        }
+
+        if ("IntersectionObserver" in window) {
+          var loadObserver = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  loadObserver.disconnect();
+                  loadGlobe();
+                }
+              });
+            },
+            { rootMargin: "600px 0px" },
+          );
+          loadObserver.observe(stage);
+        } else {
+          loadGlobe();
+        }
 
         function initGlobe(THREE) {
           var density = window.innerWidth < 760 ? 0.4 : window.innerWidth < 1180 ? 0.7 : 1;
@@ -3507,6 +3734,13 @@ function renderNetworkPage() {
           renderer.setClearColor(0x000000, 0);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
+          canvas.addEventListener("webglcontextlost", function (event) {
+            event.preventDefault();
+            console.warn("[hiw-globe] WebGL context lost; showing static fallback");
+            running = false;
+            showFallback();
+          });
+
           var earthGroup = new THREE.Group();
           earthGroup.rotation.y = -0.6;
           var outerGroup = new THREE.Group();
@@ -3522,7 +3756,11 @@ function renderNetworkPage() {
             camera.updateProjectionMatrix();
           }
           resize();
-          window.addEventListener("resize", resize);
+          if (typeof ResizeObserver !== "undefined") {
+            new ResizeObserver(resize).observe(stage);
+          } else {
+            window.addEventListener("resize", resize);
+          }
 
           var earthMat = new THREE.ShaderMaterial({
             uniforms: {
@@ -3876,8 +4114,11 @@ function renderNetworkPage() {
             renderFrame(clock.elapsedTime * 1000, dt);
           }
 
+          renderFrame(0, 0);
+          hideLoading();
+
           if (reduced) {
-            renderFrame(0, 0);
+            // already painted above; reduced-motion skips the animate loop
           } else if ("IntersectionObserver" in window) {
             var io = new IntersectionObserver(
               function (entries) {
