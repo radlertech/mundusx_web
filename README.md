@@ -158,7 +158,3 @@ npm run test:docs-site   # Run the public docs-site smoke test
 - Keep public-facing claims grounded in shipped or documented behavior.
 - Do not add real-looking usage numbers, testimonials, compliance claims, or reward details unless there is a source for them in the project.
 - Regenerate and smoke-test the site after changing page sources or generated docs behavior.
-
-## License
-
-Project-owned repository source and documentation are licensed under [Apache License 2.0](LICENSE). Distributed packages and third-party components retain their applicable licenses and notices.
